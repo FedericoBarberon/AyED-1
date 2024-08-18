@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">clase1</a> &gt; <a href="index.source.html" class="el_package">aed</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package aed;
+
+<span class="fc" id="L3">class Main {</span>
+    int fibonacci(int n) {
+        int res;
+
+<span class="fc bfc" id="L7" title="All 2 branches covered.">        if (n == 0) {</span>
+<span class="fc" id="L8">            res = 0;</span>
+<span class="fc bfc" id="L9" title="All 2 branches covered.">        } else if (n == 1) {</span>
+<span class="fc" id="L10">            res = 1;</span>
+<span class="fc" id="L11">        } else {</span>
+<span class="fc" id="L12">            res = fibonacci(n - 1) + fibonacci(n - 2);</span>
+        }
+
+<span class="fc" id="L15">        return res;</span>
+    }
+
+    int fibonacciReturn(int n) {
+        // Se pueden unificar estos if?
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        if (n == 0) {</span>
+<span class="fc" id="L21">            return 0;</span>
+        }
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if (n == 1) {</span>
+<span class="fc" id="L24">            return 1;</span>
+        }
+<span class="fc" id="L26">        return fibonacciReturn(n - 1) + fibonacciReturn(n - 2);</span>
+    }
+
+    // Revisar, no pasa los tests
+    double maximo(double[] xs) {
+<span class="fc" id="L31">        double res = xs[0];</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (double x : xs) {</span>
+            // Si encuentro un elemento mayor al que tenía guardado, me lo guardo
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            if (x &gt; res) {</span>
+<span class="fc" id="L36">                res = x;</span>
+            }
+        }
+
+<span class="fc" id="L40">        return res;</span>
+    }
+
+    int[] sumarArreglos(int[] seq1, int[] seq2) {
+<span class="fc" id="L44">        int[] res = new int[seq1.length];</span>
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (int i = 0; i &lt; seq1.length; i++) {</span>
+            // Revisar el error
+<span class="fc" id="L48">            res[i] = seq1[i] + seq2[i];</span>
+        }
+
+<span class="fc" id="L51">        return res;</span>
+    }
+
+    String iniciales(String texto) {
+<span class="fc" id="L55">        String res = &quot;&quot;;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        for (int i = 0; i &lt; texto.length(); i++) {</span>
+<span class="fc bfc" id="L57" title="All 6 branches covered.">            if (i == 0 || (texto.charAt(i - 1) == ' ' &amp;&amp; texto.charAt(i) != ' ')) {</span>
+<span class="fc" id="L58">                res += texto.charAt(i);</span>
+            }
+        }
+<span class="fc" id="L61">        return res;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
