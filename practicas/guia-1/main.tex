@@ -1,0 +1,349 @@
+\input{../macros.tex}
+
+\begin{document}
+
+\titulo{Guia 1}
+\input{../caratuladc/caratula.tex}
+%Carátula
+\maketitle
+\newpage
+
+%Indice
+\tableofcontents
+\newpage
+
+\section{Guia 1}
+
+\subsection{Ejercicio 1}
+Determinar los valores de verdad de las siguientes proposiciones cuando el valor de verdad de $a$, $b$ y $c$ es \textit{verdadero} y el de $x$ e $y$ es \textit{falso}.
+
+\begin{multicols}{2}
+    \begin{enumerate}[label=\alph*)]
+        \item $(\neg x \lor b)$ True
+        \item $((c \lor (y \land a)) \lor b)$ True
+        \item $\neg (c \lor y)$ False
+        \item $\neg (y \lor c)$ False
+        \item $(\neg(c \lor y) \sii (\neg c \land \neg y))$ True
+        \item $((c \lor y) \land (a \lor b))$ True
+        \item $(((c \lor y) \land (a \lor b)) \sii (c \lor (y \land a) \lor b))$ True
+        \item $(\neg c \land \neg y)$ False
+    \end{enumerate}
+\end{multicols}
+
+\subsection{Ejercicio 2}
+Considere la siguiente oración: "Si es mi cumpleaños o hay torta, entonces hay torta".
+
+\begin{itemize}
+    \item Escribir usando lógica proposicional y realizar la tabla de verdad
+
+          $(p \lor q) \to q$
+
+          \begin{tabular}{|c|c|c|c|}
+              \hline
+              $p$ & $q$ & $(p \lor q)$ & $(p \lor q) \to q$ \\
+              \hline
+              T   & T   & T            & T                  \\
+              \hline
+              T   & F   & T            & F                  \\
+              \hline
+              F   & T   & T            & T                  \\
+              \hline
+              F   & F   & F            & T                  \\
+              \hline
+          \end{tabular}
+
+    \item Asumiendo que la oración es verdadera y hay una torta, qué se puede concluir?
+
+          Se concluye que puede o no ser su cumpleaños.
+
+    \item Asumiendo que la oración es verdadera y no hay una torta, qué se puede concluir?
+
+          Se concluye que NO es su cumpleaños.
+
+    \item Suponiendo que la oración es mentira (es falsa), se puede concluir algo?
+
+          Se concluye que es su cumpleaños pero no hay torta :(
+\end{itemize}
+
+\subsection{Ejercicio 3}
+Usando reglas de equivalencia (conmutatividad, asociatividad, De Morgan, etc) determinar si los siguientes pares de fórmulas son equivalencias. Indicar en cada paso qué regla se utilizó.
+
+\begin{enumerate}[label=\alph*)]
+    \item \begin{itemize}
+              \item $(p \lor q) \land (p \lor r)$
+              \item $\neg p \to (q \land r)$
+          \end{itemize}
+
+          \[
+              \begin{array}{rl|l}
+                  (p \lor q) \land (p \lor r) \sii & p \lor (q \land r)             & \text{Distributiva}           \\
+                  \sii                             & \neg (\neg p) \lor (q \land r) & \text{Doble negación}         \\
+                  \sii                             & \neg p \to (q \land r)         & \text{Definición condicional}
+              \end{array}
+          \]
+
+          Las fórmulas son equivalentes.
+
+    \item \begin{itemize}
+              \item $\neg (\neg p) \to (\neg (\neg p \land \neg q))$
+              \item $q$
+
+          \end{itemize}
+
+          \[
+              \begin{array}{rl|l}
+                  \neg (\neg p) \to (\neg (\neg p \land \neg q)) \sii & \neg (\neg p) \to (p \lor q) & \text{De Morgan}                \\
+                  \sii                                                & p \to (p \lor q)             & \text{Doble negación}           \\
+                  \sii                                                & \neg p \lor (p \lor q)       & \text{Definición condicional}   \\
+                  \sii                                                & (\neg p \lor p) \lor q       & \text{Asociatividad}            \\
+                  \sii                                                & True \lor q                                                    \\
+                  \sii                                                & True                         & \text{Conjunción \textit{True}}
+              \end{array}
+          \]
+
+          \textcolor{red}{Las fórmulas no son equivalentes.}
+
+    \item \begin{itemize}
+              \item $((True \land p) \land (\neg p \lor False)) \to \neg(\neg p \land q)$
+              \item $p \land \neg q$
+          \end{itemize}
+
+          \[
+              \begin{array}{rl|l}
+                       & ((True \land p) \land (\neg p \lor False)) \to \neg(\neg p \land q)                                                               \\
+                  \sii & (p \land \neg p) \to \neg (\neg p \lor q)                           & \text{Conjunción \textit{True} y disyunción \textit{False}} \\
+                  \sii & False \to \neg (\neg p \lor q)                                      & \text{Contradicción}                                        \\
+                  \sii & True
+              \end{array}
+          \]
+
+
+          \textcolor{red}{Las fórmulas no son equivalentes.}
+
+    \item \begin{itemize}
+              \item $(p \lor (\neg p \land q))$
+              \item $\neg p \to q$
+          \end{itemize}
+
+          \[
+              \begin{array}{rl|l}
+                  (p \lor (\neg p \land q)) \sii & (p \lor \neg p) \land (p \lor q) & \text{Distributiva}           \\
+                  \sii                           & True \land (p \lor q)                                            \\
+                  \sii                           & p \lor q                                                         \\
+                  \sii                           & \neg(\neg p) \lor q              & \text{Doble negación}         \\
+                  \sii                           & \neg p \to q                     & \text{Definición condicional}
+              \end{array}
+          \]
+
+          Las fórmulas son equivalentes.
+    \item
+          \begin{itemize}
+              \item $p \to (q \land \neg (q \to r))$
+              \item $(\neg p \lor q) \land (\neg p \lor (q \land \neg r))$
+          \end{itemize}
+
+          \[
+              \begin{array}{rl|l}
+                  p \to (q \land \neg (q \to r)) \sii & \neg (\neg p) \to (q \land \neg (\neg (\neg q) \to r)) & \text{Doble negación}         \\
+                  \sii                                & \neg p \lor (q \land \neg (\neg q \lor r))             & \text{Definición condicional} \\
+                  \sii                                & \neg p \lor (q \land (q \land \neg r))                 & \text{De Morgan}              \\
+                  \sii                                & (\neg p \lor q) \land (\neg p \lor (q \land \neg r))   & \text{Distributiva}
+              \end{array}
+          \]
+
+          Las fórmulas son equivalentes.
+\end{enumerate}
+
+\subsection{Ejercicio 4}
+Determinar si las siguientes fórmulas son tautologías, contradicciones o contingencias.
+
+\begin{enumerate}[label=\alph*)]
+    \item $(p \lor \neg p)$ Tautología
+
+          \begin{tabular}{|c|c|}
+              \hline
+              $p$ & $(p \lor \neg p)$ \\
+              \hline
+              T   & \textbf{T}        \\
+              F   & \textbf{T}        \\
+              \hline
+          \end{tabular}
+
+    \item $(p \land \neg p)$ Contradicción
+
+          \begin{tabular}{|c|c|}
+              \hline
+              $p$ & $(p \land \neg p)$ \\
+              \hline
+              T   & \textbf{F}         \\
+              F   & \textbf{F}         \\
+              \hline
+          \end{tabular}
+
+    \item $((\neg p \lor q) \sii (p \to q))$ Tautología
+
+          \begin{tabular}{|c|c|c|c|c|}
+              \hline
+              $p$ & $q$ & $(\neg p \lor q)$ & $(p \to q)$ & $((\neg p \lor q) \sii (p \to q))$ \\
+              \hline
+              T   & T   & T                 & T           & \textbf{T}                         \\
+              T   & F   & F                 & F           & \textbf{T}                         \\
+              F   & T   & T                 & T           & \textbf{T}                         \\
+              F   & F   & T                 & T           & \textbf{T}                         \\
+              \hline
+          \end{tabular}
+
+    \item $((p \land q) \to p)$ Tautología
+
+          \begin{tabular}{|c|c|c|c|}
+              \hline
+              $p$ & $q$ & $(p \land q)$ & $((p \land q) \to p)$ \\
+              \hline
+              T   & T   & T             & \textbf{T}            \\
+              T   & F   & F             & \textbf{T}            \\
+              F   & T   & F             & \textbf{T}            \\
+              F   & F   & F             & \textbf{T}            \\
+              \hline
+          \end{tabular}
+
+    \item $((p \land (q \lor r)) \sii ((p \land q) \lor (p \land r)))$
+
+          \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+              \hline
+              $p$ & $q$ & $r$ & $(q \lor r)$ & $(p \land (q \lor r))$ & $(p \land q)$ & $(p \land r)$ & $((p \land q) \lor (p \land r))$ & Fórmula del enunciado \\
+              \hline
+              T   & T   & T   & T            & T                      & T             & T             & T                                & \textbf{T}            \\
+              T   & T   & F   & T            & T                      & T             & F             & T                                & \textbf{T}            \\
+              T   & F   & T   & T            & T                      & F             & T             & T                                & \textbf{T}            \\
+              T   & F   & F   & F            & F                      & F             & F             & F                                & \textbf{T}            \\
+              F   & T   & T   & T            & F                      & F             & F             & F                                & \textbf{T}            \\
+              F   & T   & F   & T            & F                      & F             & F             & F                                & \textbf{T}            \\
+              F   & F   & T   & T            & F                      & F             & F             & F                                & \textbf{T}            \\
+              F   & F   & F   & F            & F                      & F             & F             & F                                & \textbf{T}            \\
+              \hline
+          \end{tabular}
+
+    \item $((p \to (q \to r)) \to ((p \to q) \to (p \to r)))$ \hacer
+\end{enumerate}
+
+\subsection{Ejercicio 5}
+Determinar la relación de fuerza de los siguientes pares de fórmulas:
+
+\begin{enumerate}[label=\alph*)]
+    \item $True, False$
+
+          $False$ es más fuerte que $True$.
+
+    \item $(p \land q), (p \lor q)$
+
+          $(p \land q)$ es más fuerte que $(p \lor q)$.
+
+    \item $p, (p \land q)$
+
+          $(p \land q)$ es más fuerte que $p$.
+
+    \item $p, (p \lor q)$
+
+          $p$ es más fuerte que $(p \lor q)$.
+
+    \item $p, q$
+
+          No hay relación de fuerza.
+
+    \item $p, (p \to q)$
+
+          No hay relación de fuerza.
+\end{enumerate}
+
+\subsection{Ejercicio 6}
+Asumiendo que el valor de verdad de $b$ y $c$ es \textit{verdadero}, el de $a$ es \textit{falso} y el de $x$ e $y$ es \textit{indefinido}, indicar cuáles de los operadores deben ser operadores "luego" para que la expresión no se indefina nunca:
+
+\begin{enumerate}[label=\alph*)]
+    \item $(\neg x \lor b)$
+
+          Se indefine siempre.
+
+    \item $((c \lor (y \land a)) \lor b)$
+
+          $((c \lor_L (y \land a)) \lor b)$
+
+    \item $\neg (c \lor y)$
+
+          $\neg (c \lor_L y)$
+
+    \item $(\neg (c \lor y) \sii (\neg c \land \neg y))$
+
+          $(\neg (c \lor_L y) \sii (\neg c \land_L \neg y))$
+
+    \item $((c \lor y) \land (a \lor b))$
+
+          $((c \lor_L y) \land (a \lor b))$
+
+    \item $(((c \lor y) \land (a \lor b)) \sii (c \lor (y \land a) \lor b))$
+
+          $(((c \lor_L y) \land (a \lor b)) \sii (c \lor_L (y \land a) \lor b))$
+
+    \item $(\neg c \land \neg y)$
+
+          $(\neg c \land_L \neg y)$
+\end{enumerate}
+
+\subsection{Ejercicio 7}
+Sean $p$, $q$ y $r$ tres variables de las que se sabe que:
+
+\begin{itemize}
+    \item $p$ y $q$ nunca esán indefinidas,
+    \item $r$ se indefine sii $q$ es \textit{verdadera}
+\end{itemize}
+
+Proponer una fórmula que nunca se indefina, utilizando siempre las tres variables y que sea verdadera si y solo si se cumple que:
+
+\begin{enumerate}[label=\alph*)]
+    \item Al menos una es verdadera.
+
+          $(p \lor q) \lor_L r$
+
+    \item Ninguna es verdadera.
+
+          $\neg (p \lor q) \land_L \neg r$
+
+    \item Exactamente una de las tres es verdadera. \hacer
+
+    \item Sólo $p$ y $q$ son verdaderas. \hacer
+
+    \item No todas al mismo tiempo son verdaderas. \hacer
+
+    \item $r$ es verdadera. \hacer
+\end{enumerate}
+
+\subsection{Ejercicio 8}
+Determinar, para cada aparición de variables, si dicha aparición se encuentra libre o ligada. En cada caso de estar ligada, aclarar a qué cuantificador lo está. En los casso en que sea posible, proponer valores para las variables libres de modo tal que las expresiones sean verdaderas.
+
+\begin{enumerate}[label=\alph*)]
+    \item $(\forall x: \mathbb{Z})(0 \leq x < n \to x + y = z)$
+
+          Ligadas: $x$ al cuantificador $(\forall x: \mathbb{Z})$.
+
+          Libres: $n, y, z$. Posibles valores: $n = 1, y = z = 5$.
+
+    \item $(\forall x: \mathbb{Z})((\forall y: \mathbb{Z})((0 \leq x < n \land 0 \leq y < m) \to x + y = z))$
+
+          Ligadas: $x$ al cuantificador $(\forall x: \mathbb{Z})$, $y$ al cuantificador $(\forall y: \mathbb{Z})$.
+
+          Libres: $n, m, z$. Posibles valores: $n = 1, m = 1, z = 0$.
+
+    \item $(\forall j: \mathbb{Z})(0 \leq j < 10 \to j < 0)$
+
+          Ligadas: $j$ al cuantificador $(\forall j: \mathbb{Z})$.
+
+          En este caso la expresión es siempre falsa.
+
+    \item $(\forall j: \mathbb{Z})(j \leq 0 \to P(j)) \land P(j)$
+
+          Ligadas: $j$ al cuantificador $(\forall j: \mathbb{Z})$.
+
+          Libres: $j$.
+
+          El valor de verdad depende de $P(j)$.
+\end{enumerate}
+\end{document}
