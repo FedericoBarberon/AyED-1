@@ -1,0 +1,94 @@
+\input{../macros/macros.tex}
+\input{../macros/AEDmacros.tex}
+
+\begin{document}
+
+\titulo{Guia 2}
+\input{../caratuladc/caratula.tex}
+%Carátula
+\maketitle
+\newpage
+
+%Indice
+\tableofcontents
+\newpage
+
+\section{Guia 2}
+
+\subsection{Ejercicio 1}
+Nombrar los siguientes predicados sobre enteros:
+
+\begin{enumerate}[label=\alph*)]
+      \item \pred{esCuadrado}{x: \ent}{\existe{c}{\ent}{c > 0 \land (c * c = x)}}
+      \item \pred{esPrimo}{x: \ent}{\paraTodo{n}{\ent}{(1 < n < x) \thenLuego (x \mod n \neq 0)}}
+\end{enumerate}
+
+\subsection{Ejercicio 2}
+Escriba los siguientes predicados sobre números enteros en lenguaje de especifiación:
+
+\begin{enumerate}[label=\alph*)]
+      \item Que sea verdadero si y sólo si $x$ e $y$ son coprimos.
+
+            \pred{sonCoprimos}{x, y: \ent}{
+                  \paraTodo{i}{\ent}{i > 1 \thenLuego \neg (x \mod i = 0 \land y \mod i = 0)}
+            }
+
+      \item Que sea verdadero si $y$ es el mayor primo que divide a $x$.
+
+            \pred{mayorPrimoQueDivide}{x, y: \ent}{
+                  (esPrimo(y) \yLuego x \mod y = 0) \land \neg \existe{i}{\ent}{esPrimo(i) \yLuego (x \mod i = 0 \land i > y)}
+            }
+\end{enumerate}
+
+\subsection{Ejercicio 3}
+Nombre los siguientes predicados auxiliares sobre secuencias de enteros:
+
+\begin{enumerate}[label=\alph*)]
+      \item \pred{todoPositivos}{s: \TLista{\ent}}{
+                  \paraTodo{i}{\ent}{(0 \leq i < |s|) \thenLuego s[i] \geq 0}
+            }
+
+      \item \pred{todosDistintos}{s: \TLista{\ent}}{
+                  \paraTodo{i}{\ent}{(0 \leq i < |s|) \thenLuego
+                        \paraTodo{j}{\ent}{(0 \leq j < |s| \land i \neq j) \thenLuego (s[i] \neq s[j])}}
+            }
+\end{enumerate}
+
+\subsection{Ejercicio 4}
+Escriba los siguientes predicados auxiliares sobre secuencias de enteros, aclarando los tipos de los parámetros que recibe:
+
+\begin{enumerate}[label=\alph*)]
+      \item \textit{esPrefijo}, que determina si una secuencia es prefijo de otra.
+
+            \pred{esPrefijo}{s1, s2: \TLista{\ent}}{
+                  (|s1| \leq |s2|) \yLuego \paraTodo{i}{\ent}{
+                        (0 \leq i < |s1|) \thenLuego (s1[i] = s2[i])
+                  }
+            }
+
+      \item \textit{estáOrdenada}, que determina si la secuencia está ordenada de menor a mayor.
+
+            \pred{estáOrdenada}{s: \TLista{\ent}}{
+                  \paraTodo{i}{\ent}{(0 \leq i < |s| - 1) \thenLuego (s[i] \leq s[i + 1])}
+            }
+
+      \item \textit{hayUnoParQueDivideAlResto}, que determina si hay un elemento par en la secuencia que divide a todos los otros elementos de la secuencia.
+
+            \pred{divideA}{d, n: \ent}{(d \neq 0) \yLuego n \mod d = 0}
+
+            \pred{hayUnoParQueDivideAlResto}{s: \TLista{\ent}}{
+                  \existe{i}{\ent}{(0 \leq i < |s|) \yLuego esPar(s[i]) \land \paraTodo{j}{\ent}{(0 \leq j < |s|) \yLuego divideA(s[i], s[j])}}
+            }
+
+      \item \textit{enTresPartes}, que determina si en la secuencia aparecen (de izquieda a derecha) primero 0s, despúes 1s y por último 2s. Por ejemplo $\langle 0, 0, 1, 1, 1, 1, 2 \rangle$ cumple, pero $\langle 0, 1, 3, 0 \rangle$ o $\langle 0, 0, 0, 1, 1 \rangle$ no. ¿Cómo modificaría la expresión para que se admitan cero apariciones de 0s, 1s y 2s (es decir, para que por ejemplo $\langle 0, 0, 0, 1, 1 \rangle$ o $\langle \rangle$ sí cumplan)?
+
+            \pred{tieneSoloCeroUnoYDos}{s: \TLista{\ent}}{
+                  \paraTodo{i}{\ent}{(0 \leq i < |s|) \thenLuego (s[i] = 0 \lor s[i] = 1 \lor s[i] = 2)}
+            }
+
+            \pred{enTresPartes}{s: \TLista{\ent}}{
+                  tieneSoloCeroUnoYDos(s) \land estaOrdenada(s)
+            }
+\end{enumerate}
+
+\end{document}
