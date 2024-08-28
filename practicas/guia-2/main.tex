@@ -91,4 +91,25 @@ Escriba los siguientes predicados auxiliares sobre secuencias de enteros, aclara
             }
 \end{enumerate}
 
+\subsection{Ejercicio 5}
+Sea $s$ una secuencia de elementos de tipo $\ent$. Escribir una expresión (utilizando sumatoria y productoria) tal que:
+
+\begin{enumerate}[label=\alph*)]
+      \item Cuente la cantidad de veces que aparece el elemento $e$ de tipo $\ent$ en la secuencia $s$.
+
+            $\sum\limits_{i=0}\limits^{|s| - 1} \IfThenElse{s[i] = e}{1}{0}$
+
+      \item Sume los elementos en las posiciones impares de la secuencia $s$.
+
+            $\sum\limits_{i=0}\limits^{|s| - 1} \IfThenElse{\neg esPar(s[i])}{s[i]}{0}$
+
+      \item Sume los elementos mayores a 0 contenidos en la secuencia $s$.
+
+            $\sum\limits_{i=0}\limits^{|s| - 1} \IfThenElse{s[i] > 0}{s[i]}{0}$
+
+      \item Sume los inverso multiplicativos $(\frac{1}{x})$ de los elementos contenidos en la secuencia $s$ distintos a 0.
+
+            $\sum\limits_{i=0}\limits^{|s| - 1} \IfThenElse{s[i] \neq 0}{\frac{1}{s[i]}}{0}$
+\end{enumerate}
+
 \end{document}
