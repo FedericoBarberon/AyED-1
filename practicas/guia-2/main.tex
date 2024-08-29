@@ -112,4 +112,132 @@ Sea $s$ una secuencia de elementos de tipo $\ent$. Escribir una expresión (util
             $\sum\limits_{i=0}\limits^{|s| - 1} \IfThenElse{s[i] \neq 0}{\frac{1}{s[i]}}{0}$
 \end{enumerate}
 
+\subsection{Ejercicio 6}
+Las siguientes especifiaciones no son correctas. Indicar por qué y corregirlas para que describan correctamente el problema.
+
+\begin{enumerate}[label=\alph*)]
+      \item progresionGeometricaFactor2: Indica si la secuencia $l$ representa una progresión geométrica factor 2. Es decir, si cada elemento de la secuencia es el doble del elemento anterior.
+
+            \begin{proc}{progresionGeometricaFactor2}{\In l: \TLista{\ent}}{\bool}
+                  \requiere{True}
+                  \asegura{res = True \Iff (\paraTodo{i}{\ent}{0 \leq i < |l| \thenLuego l[i] = 2 * l[i - 1]})}
+            \end{proc}
+
+            El asegura se indefine con $i = 0$ pues trata de acceder a $l[-1]$.
+
+            Solucion: \begin{proc}{progresionGeometricaFactor2}{\In l: \TLista{\ent}}{\bool}
+                  \requiere{True}
+                  \asegura{res = True \Iff (\paraTodo{i}{\ent}{0 < i < |l| \thenLuego l[i] = 2 * l[i - 1]})}
+            \end{proc}
+
+      \item minimo: Devuelve en $res$ el menor elemento de $l$.
+
+            \begin{proc}{minimo}{\In l: \TLista{\ent}}{\ent}
+                  \requiere{True}
+                  \asegura{\paraTodo{y}{\ent}{(y \in l \land y \neq x) \Then y > res}}
+            \end{proc}
+
+            En el asegura se hace referencia a $x$ que no está definida. La lista no puede estar vacía y $res$ tiene que estar en la lista.
+
+            Solución: \begin{proc}{minimo}{\In l: \TLista{\ent}}{\ent}
+                  \requiere{|l| > 0}
+                  \asegura{res \in l \land \paraTodo{y}{\ent}{(y \in l \land y \neq res) \Then y > res}}
+            \end{proc}
+\end{enumerate}
+
+\subsection{Ejercicio 7}
+Para los siguientes problemas, dar todas las soluciones posibles a las entradas dadas:
+
+\begin{enumerate}[label=\alph*)]
+      \item \begin{proc}{indiceDelMaximo}{\In l: \TLista{\float}}{\ent}
+                  \requiere{|l| > 0}
+                  \asegura{0 \leq res < |l| \yLuego (\paraTodo{i}{\ent}{0 \leq i < |l| \thenLuego l[i] \leq l[res]})}
+            \end{proc}
+
+            \begin{enumerate}[label=\roman*)]
+                  \item $\langle 1, 2, 3, 4 \rangle$ $res = 3$
+                  \item $\langle 15 \punto 5, -18, 4 \punto 215, 15 \punto 5, -1 \rangle$ $res = 0 \lor res = 3$
+                  \item $\langle 0, 0, 0, 0, 0, 0 \rangle$ $res \in [0, |l|)$
+            \end{enumerate}
+
+      \item \begin{proc}{indiceDelPrimerMaximo}{\In l: \TLista{\float}}{\ent}
+                  \requiere{|l| > 0}
+                  \asegura{0 \leq res < |l| \yLuego (\paraTodo{i}{\ent}{0 \leq i < |l| \thenLuego (l[i] \leq l[res] \lor (l[i] = l[res] \land i >= res))})}
+            \end{proc}
+
+            \begin{enumerate}[label=\roman*)]
+                  \item $\langle 1, 2, 3, 4 \rangle$ $res = 3$
+                  \item $\langle 15 \punto 5, -18, 4 \punto 215, 15 \punto 5, -1 \rangle$ $res = 0$
+                  \item $\langle 0, 0, 0, 0, 0, 0 \rangle$ $res = 0$
+            \end{enumerate}
+
+      \item ¿Para qué valores de entrada indiceDelPrimerMaximo y indiceDelMaximo tienen necesariamente la misma salida?
+
+            Tienen la misma salida sii el máximo de la lista no está repetido.
+\end{enumerate}
+
+\subsection{Ejercicio 8}
+Sea $f: \float  \times \float  \to \float$ definida como:
+
+\[
+      f(a, b) = \begin{cases}
+            2b    & \text{si } a < 0    \\
+            b - 1 & \text{en otro caso}
+      \end{cases}
+\]
+
+Indicar cuáles de las siguientes especifiaciones son correctas para el problema de calcular $f(a, b)$. Para aquellas que no lo son, indicar por qué.
+
+\begin{enumerate}[label=\alph*)]
+      \item \begin{proc}{f}{\In a, b: \float}{\float}
+                  \requiere{True}
+                  \asegura{(a < 0 \land res = 2 * b) \land (a \geq 0 \land res = b - 1)}
+            \end{proc}
+
+            Falla pues el asegura es siempre falso ya que, por la asociatividad, se tiene que $(a < 0 \land a \geq 0 \land \dots)$ lo cual es siempre falso.
+
+      \item \begin{proc}{f}{\In a, b: \float}{\float}
+                  \requiere{True}
+                  \asegura{(a < 0 \land res = 2 * b) \lor (a \geq 0 \land res = b - 1)}
+            \end{proc}
+
+            Es correcta.
+
+      \item \begin{proc}{f}{\In a, b: \float}{\float}
+                  \requiere{True}
+                  \asegura{(a < 0 \Then res = 2 * b) \lor (a \geq 0 \Then res = b - 1)}
+            \end{proc}
+
+            Falla pues siempre es verdadera.
+
+      \item \begin{proc}{f}{\In a, b: \float}{\float}
+                  \requiere{True}
+                  \asegura{res = \If{a < 0}{2 * b}{b - 1}}
+            \end{proc}
+
+            Es correcta.
+\end{enumerate}
+
+\subsection{Ejercicio 9}
+Considerar la siguiente especificación, junto con un algoritmo que dado $x$ devuelve $x^2$.
+
+\begin{proc}{unoMasGrande}{\In x: \float}{\float}
+      \requiere{True}
+      \asegura{res > x}
+\end{proc}
+
+\begin{enumerate}[label=\alph*)]
+      \item ¿Qué devuelve el algoritmo si recibe $x = 3$? ¿El resultado hace verdadera la posrtcondición de unoMasGrande?
+
+            El algoritmo devuelve 9 y hace verdadera la postcondición pues 9 > 3.
+
+      \item ¿Qué sucede para las entradas $x = 0\punto5, x = 1, x = -0\punto2$ y $x = -7$?
+
+            Para los primeros 2 falla y para los útlimos 2 cumple.
+
+      \item Teniendo en cuenta lo respondido en los puntos anteriores, escribir una \textbf{precondición} para unoMasGrande, de manera tal que el algoritmo cumpla con la especifiación.
+
+            requiere \{$|x| > 1$\}
+\end{enumerate}
+
 \end{document}
