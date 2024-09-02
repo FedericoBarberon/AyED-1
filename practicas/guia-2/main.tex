@@ -240,4 +240,374 @@ Considerar la siguiente especificación, junto con un algoritmo que dado $x$ dev
             requiere \{$|x| > 1$\}
 \end{enumerate}
 
+\subsection{Ejercicio 10}
+Sean $x$ y $r$ variables de tipo \float. Considerar los siguientes predicados:
+
+\begin{multicols}{2}
+      \begin{itemize}
+            \item P1: \{$x \leq 0$\}
+            \item P2: \{$x \leq 10$\}
+            \item P3: \{$x \leq -10$\}
+            \item Q1: \{$r \geq x^2$\}
+            \item Q2: \{$r \geq 0$\}
+            \item Q3: \{$r = x^2$\}
+      \end{itemize}
+\end{multicols}
+
+\begin{enumerate}[label=\alph*)]
+      \item Indicar la relación de fuerza entre P1, P2 y P3
+
+            P1 es más fuerte que P2
+
+            P3 es más fuerte que P1 y P2
+
+      \item Indicar la relación de fuerza entre Q1, Q2 y Q3
+
+            Q1 es más fuerte que Q2
+
+            Q3 es más fuerte que Q2 y Q1
+
+      \item Escribir 2 programas que cumplan con la siguiente especifiación:
+
+            \begin{proc}{hagoAlgo}{\In x: \float}{\float}
+                  \requiere{x \leq 0}
+                  \asegura{res \geq x^2}
+            \end{proc}
+
+            $S1 \equiv res := x^2$
+
+            $S2 \equiv res := x^2 + 1$
+
+      \item Sea A un algoritmo que cumple con la especifiación del ítme anterior. Decidir si necesariamente cumple las siguientes especificaciones:
+
+            \begin{enumerate}
+                  \item requiere \{$x \leq -10$\}, asegura \{$r \geq x^2$\} Cumple.
+                  \item requiere \{$x \leq 10$\}, asegura \{$r \geq x^2$\} No Cumple.
+                  \item requiere \{$x \leq 0$\}, asegura \{$r \geq 0$\} Cumple.
+                  \item requiere \{$x \leq 0$\}, asegura \{$r = 0$\} No Cumple.
+                  \item requiere \{$x \leq -10$\}, asegura \{$r \geq 0$\} Cumple.
+                  \item requiere \{$x \leq 10$\}, asegura \{$r = 0$\} No Cumple.
+            \end{enumerate}
+
+      \item ¿Qué conclusión pueden sacar? ¿Qué debe cumplirse con respecto a las precondiciones y postcondiciones para que sea seguro \textbf{reemplazar la especificación}?
+
+            Se concluye que para poder reemplazar una especificación por otra debe ocurrir que la nueva precondición sea igual o más fuerte que la anterior, y la postcondición sea igual o más débil que la anterior.
+\end{enumerate}
+
+\subsection{Ejercicio 11}
+Considerar las siguientes dos especificaciones, junto con un algoritmo $a$ que satisface la especificación de p2.
+
+\begin{proc}{p1}{\In x: \float, \In n: \ent}{\ent}
+      \requiere{x \neq 0}
+      \asegura{x^n - 1 < res \leq x^n}
+\end{proc}
+
+\begin{proc}{p2}{\In x: \float, \In n: \ent}{\ent}
+      \requiere{n \leq 0 \Then x \neq 0}
+      \asegura{res = \lfloor x^n \rfloor }
+\end{proc}
+
+\begin{enumerate}[label=\alph*)]
+      \item Dados valores de $x$ y $n$ que hacen verdadera la precondición de p1, demostrar que hacen también verdadera la precondición de p2.
+
+            Basta probar que $x \neq 0 \Then (n \leq 0 \Then x \neq 0)$
+
+            \begin{align*}
+                  x \neq 0 \Then (n \leq 0 \Then x \neq 0) \\
+                  x = 0 \lor (n > 0 \lor x \neq 0)         \\
+                  (x = 0 \lor x \neq 0) \lor n > 0         \\
+                  True \lor n > 0                          \\
+                  True
+            \end{align*}
+
+            Por lo tanto, los valores que cumplen la precondición de p1 cumplen la precondición de p2.
+
+      \item Ahora, dados estos valores de $x$ y $n$, supongamos que se ejecuta $a$: llegamos a un valor de $res$ que hace verdadera la postcondición de p2. ¿Será también verdadera la postcondición de p1 con este valor de $res$?
+
+            Si $res$ satisface la postcondición de p2 esto es que $res = \lfloor x^n \rfloor$. Para ver si satisface la precondición de p1 hay que ver si es verdadero que $x^n - 1 < \lfloor x^n \rfloor \leq x^n$, lo cuál es trivial. Por lo tanto satisface ambas postcondiciones.
+
+      \item ¿Podemos concluir que $a$ satisface la especificación de p1?
+
+            Si. Como cualquier valor que cumple la precondición de p1, cumple a su vez la precondición de p2, entonces como $a$ satisface la especificación de p2, ejecutar $a$ con cualquier valor que satisfaga la precondiciónde p1 devolverá un valor que satisface ambas postcondiciones, en particular la de p1, por lo tanto, $a$ satisface la especifiación de p1.
+\end{enumerate}
+
+\subsection{Ejercicio 12}
+Especificar los siguientes problemas:
+
+\begin{enumerate}[label=\alph*]
+      \item Dado un entero, decidir si es par
+
+            \begin{proc}{esPar}{\In n: \ent}{\bool}
+                  \requiere{True}
+                  \asegura{res = \True \Iff n \mod 2 = 0}
+            \end{proc}
+
+      \item Dado un entero $n$ y otro $m$, decidir si $n$ es un múltiplo de $m$.
+
+            \begin{proc}{esMultiplo}{\In n,m: \ent}{\bool}
+                  \requiere{True}
+                  \asegura{res = \True \Iff \existe{i}{\ent}{n = i * m}}
+            \end{proc}
+
+      \item Dado un entero, listar todos sus divisores positivos (sin duplicados)
+
+            \begin{proc}{divisoresPos}{\In n: \ent}{\TLista{\ent}}
+                  \requiere{True}
+                  \asegura{sinDuplicados(res) \land sonDivisoresPos(n, res) \land noHayOtroDivisorPos(n, res)}
+
+                  \pred{sonDivisoresPos}{n: \ent, divsPos: \TLista{\ent}}{
+                        \paraTodo{i}{\ent}{i \in divsPos \thenLuego i > 0 \land divideA(i, n)}
+                  }
+
+                  \pred{noHayOtroDivisorPos}{n: \ent, divsPos: \TLista{\ent}}{
+                        \lnot \existe{i}{\ent}{i > 0 \land i \notin divsPos \land divideA(i, n)}
+                  }
+
+                  \pred{sinDuplicados}{list: \TLista{\ent}}{
+                        \paraTodo{i}{\ent}{
+                              i \in list \thenLuego cantApariciones(i, list) = 1
+                        }
+                  }
+
+                  \pred{divideA}{d, n: \ent}{
+                        \existe{k}{\ent}{n = d * k}
+                  }
+
+                  \aux{cantApariciones}{e: \ent, list: \TLista{\ent}}{\ent}{
+                        \sum\limits_{i = 0}\limits^{|list| - 1} \If{list[i] = e}{1}{0}
+                  }
+            \end{proc}
+
+      \item Dado un entero positivo, obtener su descomposición en factores primos. Devolver una secuencia de tuplas $(p, e)$, donde $p$ es un primo y $e$ es su exponente, ordenada en forma creciente con respecto a $p$.
+
+            \begin{proc}{descomposicionEnPrimos}{\In n: \ent}{\TLista{\ent \times \nat}}
+                  \requiere{n \geq 0}
+                  \asegura{estaOrdenada(res) \land \\
+                        \paraTodo{i}{\ent}{0 \leq i < |res| \thenLuego esPrimo(res[i]_0)} \land \\
+                        \left(\displaystyle\prod_{i = 0}^{|res| - 1} res[i]_0^{res[i]_1}\right) = n}
+
+                  \pred{estaOrdenada}{list: \TLista{\ent \times \nat}}{
+                        \paraTodo{i}{\ent}{0 \leq i < |list| - 1 \thenLuego list[i]_0 <= list[i + 1]_0 }
+                  }
+
+                  \pred{esPrimo}{n: \ent}{
+                        \paraTodo{i}{\ent}{(i > 0 \yLuego n \mod i = 0) \thenLuego (i = 1 \lor i = n)}
+                  }
+            \end{proc}
+\end{enumerate}
+
+\subsection{Ejercicio 13}
+Especificar los siguientes problemas sobre secuencias:
+
+\begin{enumerate}[label=\alph*)]
+      \item Dados dos secuencias $s$ y $t$, decidir si $s$ está \textit{incluida} en $t$, es decir, si todos los elementos de $s$ aparecen en $t$ en igual o mayor cantidad.
+
+            \begin{proc}{estaIncluida}{\In s, t: \TLista{\ent}}{\bool}
+                  \requiere{True}
+                  \asegura{res = \True \Iff \paraTodo{i}{\ent}{i \in s \Then cantApariciones(i, s) \leq cantApariciones(i, t)}}
+
+                  \aux{cantApariciones}{e: \ent, s: \TLista{\ent}}{\ent}{
+                        \displaystyle\sum_{i = 0}^{|s| - 1} \If{s[i] = e}{1}{0}
+                  }
+            \end{proc}
+
+      \item Dadas dos secuencias $s$ y $t$, devolver su \textit{intersección}, es decir, una secuencia con todos los elementos que aparecen en ambas. Si un mismo elemento tiene repetidos, la secuencia retornada debe contener la cantidad mínima de apariciones del elemento en $s$ y $t$.
+
+            \begin{proc}{interseccion}{\In s, t: \TLista{\ent}}{\TLista{\ent}}
+                  \requiere{True}
+                  \asegura{todoElementoPerteneceAAmbas(res, s, t) \land \\
+                        todoElementoConLaMinimaAparicion(res, s, t)}
+
+                  \pred{todoElementoPerteneceAAmbas}{list, s, t: \TLista{\ent}}{
+                        \paraTodo{n}{\ent}{n \in list \Iff (n \in s \land n \in t)}
+                  }
+
+                  \pred{todoElementoConLaMinimaAparicion}{list, s, t: \TLista{\ent}}{
+                        \paraTodo[multLineas]{n}{\ent}{n \in list \Then cantApariciones(n, list) = min(cantApariciones(n, s), cantApariciones(n, t))}
+                  }
+
+                  \aux{cantApariciones}{e: \ent, s: \TLista{\ent}}{\ent}{
+                        \displaystyle\sum_{i = 0}^{|s| - 1} \If{s[i] = e}{1}{0}
+                  }
+            \end{proc}
+
+      \item Dada una secuencia de números enteros, devolver aquel que divida a más elementos de la secuencia. Ele elemento tiene que pertenecer a la secuencia original. Si existe más de un elemento que cumple esta propiedad, devolver alguno de ellos.
+
+            \begin{proc}{elQueMasDivide}{\In s: \TLista{\ent}}{\ent}
+                  \requiere{True}
+                  \asegura{res \in s \land \paraTodo[multLineas]{n}{\ent}{n \in s \Then cantidadDeMultiplosEnLista(n, s) \leq cantidadDeMultiplosEnLista(res, s)}}
+
+                  \pred{divideA}{d, n: \ent}{
+                        \existe{k}{\ent}{n = d * k}
+                  }
+
+                  \aux{cantidadDeMultiplosEnLista}{e: \ent, s: \TLista{\ent}}{\ent}{
+                        \displaystyle\sum_{i = 0}^{|s| - 1} \If{divideA(e, s[i])}{1}{0}
+                  }
+            \end{proc}
+
+      \item Dada una secuencia de secuencias de enteros $l$, devolver una secuencia de $l$ que contenga el máximo valor. Por ejemplo, si $l = \langle \langle 2, 3, 5 \rangle, \langle 8, 1 \rangle, \langle 2, 8, 4, 3 \rangle \rangle$, devolver $\langle 8, 1 \rangle$ o $\langle 2, 8, 4, 3 \rangle$
+
+            \begin{proc}{secuenciaConMax}{\In s: \TLista{\TLista{\ent}}}{\TLista{\ent}}
+                  \requiere{True}
+                  \asegura{res \in s \land \\
+                        \existe{max}{\ent}{max \in res \land \paraTodo{i}{\ent}{0 \leq i < |s| \thenLuego \paraTodo{n}{\ent}{n \in s[i] \Then n \leq max}}}
+                  }
+            \end{proc}
+
+      \item Dada una secuencia $l$ con todos sus elementos distintos, devolver la secuencia de $partes$, es decir, la secuencia de todas las secuencias incluidas en $l$, cada una con sus elementos en el mismo orden en que aparecen en $l$.
+
+            \begin{proc}{partes}{\In l: \TLista{\ent}}{\TLista{\TLista{\ent}}}
+                  \requiere{todosDistintos(l)}
+                  \asegura{} \hacer
+
+                  \pred{todosDistintos}{l: \TLista{\ent}}{
+                        \paraTodo{n}{\ent}{n \in l \Then cantApariciones(n, l) = 1}
+                  }
+
+                  \aux{cantApariciones}{e: \ent, s: \TLista{\ent}}{\ent}{
+                        \displaystyle\sum_{i = 0}^{|s| - 1} \If{s[i] = e}{1}{0}
+                  }
+            \end{proc}
+\end{enumerate}
+
+\subsection{Ejercicio 14}
+Dados dos enteros $a$ y $b$, se necesita calcular la suma y retornarla en un entero $c$. ¿Cuáles de las siguientes especificaciones son correctas para ese problema? Para las que no lo son, indicar por qué.
+
+\begin{enumerate}[label=\alph*)]
+      \item \begin{proc}{sumar}{\Inout a, b, c: \ent}{}
+                  \requiere{True}
+                  \asegura{a + b = c}
+            \end{proc}
+
+            Esta especificación está mal porque los valores de $a$ y $b$ pueden modificarse durante la ejecución, lo cuál produciria un resultado no deseado.
+
+      \item \begin{proc}{sumar}{\In a, b: \ent, \Inout c: \ent}{}
+                  \requiere{True}
+                  \asegura{c = a + b}
+            \end{proc}
+
+            Esta especifiación es correcta.
+
+      \item \begin{proc}{sumar}{\Inout a, b, c: \ent}{}
+                  \requiere{a = A_0 \land b = B_0}
+                  \asegura{a = A_0 \land b = B_0 \land c = a + b}
+            \end{proc}
+
+            Esta especifiación es correcta.
+\end{enumerate}
+
+\subsection{Ejercicio 15}
+Dada una secuencia $l$, se desea sacar su primer elemento y devolverlo. Decidir cuáles de estas especificaciones son correctas. Para las que no lo son, indicar por qué y justificar con ejemplos.
+
+\begin{enumerate}[label=\alph*)]
+      \item \begin{proc}{tomarPrimero}{\Inout l: \TLista{\float}}{\float}
+                  \requiere{|l| > 0}
+                  \asegura{res = head(l)}
+            \end{proc}
+
+            Está mal porque el asegura referencia al estado final de $l$, por lo que $head(l)$ sería el segundo elemento de la lista. Ademas no pone condiciones sobre que hay que sacar el primer elemento de la lista.
+
+      \item \begin{proc}{tomarPrimero}{\Inout l: \TLista{\float}}{\float}
+                  \requiere{|l| > 0 \land l = L_0}
+                  \asegura{res = head(L_0)}
+            \end{proc}
+
+            Está mal pues no especifica que se debe sacar el primer elemento de la lista.
+
+      \item \begin{proc}{tomarPrimero}{\Inout l: \TLista{\float}}{\float}
+                  \requiere{|l| > 0}
+                  \asegura{res = head(L_0) \land |l| = |L_0| - 1}
+            \end{proc}
+
+            Está mal pues $L_0$ no está definida previamente en el requiere. Que la longitud sea 1 menor no necesariamente implica que se haya eliminado el primer elemento.
+
+      \item \begin{proc}{tomarPrimero}{\Inout l: \TLista{\float}}{\float}
+                  \requiere{|l| > 0 \land l = L_0}
+                  \asegura{res = head(L_0) \land l = tail(L_0)}
+            \end{proc}
+
+            Esta especifiación es correcta.
+\end{enumerate}
+
+\subsection{Ejercicio 16}
+Dada una secuencia de enteros, se requiere multiplicar por 2 aquéllos valores que se encuentran en posiciones pares. Indicar por qué son incorrectas las siguientes especiﬁcaciones y proponer una alternativa correcta.
+
+\begin{enumerate}[label=\alph*)]
+      \item \begin{proc}{duplicarPares}{\Inout l: \TLista{\ent}}{}
+                  \requiere{l = L_0}
+                  \asegura{|l| = |L_0| \land \\
+                  \paraTodo{i}{\ent}{(0 \leq i < |l| \land i \mod 2 = 0) \thenLuego l[i] = 2 * L_0[i]}
+                  }
+            \end{proc}
+
+            Está mál pues no especifica que los elementos en posiciones impares se mantienen igual
+
+      \item \begin{proc}{duplicarPares}{\Inout l: \TLista{\ent}}{}
+                  \requiere{l = L_0}
+                  \asegura{
+                  \paraTodo{i}{\ent}{(0 \leq i < |l| \land i \mod 2 \neq 0) \thenLuego l[i] = L_0[i]} \land \\
+                  \paraTodo{i}{\ent}{(0 \leq i < |l| \land i \mod 2 = 0) \thenLuego l[i] = 2 * L_0[i]}
+                  }
+            \end{proc}
+
+            Está mal pues no especifica que la secuencia tenga la misma cantidad de elementos.
+
+      \item \begin{proc}{duplicarPares}{\Inout l: \TLista{\ent}}{\TLista{\ent}}
+                  \requiere{True}
+                  \asegura{
+                        |l| = |res| \land \\
+                        \paraTodo{i}{\ent}{(0 \leq i < |l| \land i \mod 2 \neq 0) \thenLuego res[i] = l[i]} \land \\
+                        \paraTodo{i}{\ent}{(0 \leq i < |l| \land i \mod 2 = 0) \thenLuego res[i] = 2 * l[i]}
+                  }
+            \end{proc}
+
+            Está mal pues no especifica que tiene que modificar la secuencia original.
+\end{enumerate}
+
+Solución propuesta:
+
+\begin{proc}{duplicarPares}{\Inout l: \TLista{\ent}}{}
+      \requiere{l = L_0}
+      \asegura{|l| = |L_0| \yLuego \\
+            \paraTodo{i}{\ent}{0 \leq i < |l| \thenLuego (i \mod 2 = 0 \land l[i] = 2 * L_0[i]) \lor (i \mod 2 \neq 0 \land l[i] = L_0[i])}}
+\end{proc}
+
+\subsection{Ejercicio 17}
+Especificar los siguientes problemas de modificación de secuencias:
+
+\begin{enumerate}[label=\alph*)]
+      \item Dada una secuencia de enteros mayores a dos, reemplaza dichos valores por el número primo menor más cercano. Por ejemplo, si $l = \langle 6, 5, 9, 14 \rangle$, luego de aplicar $primosHermanos(l), l = \langle 5, 3, 7, 13 \rangle$
+
+            \begin{proc}{primosHermanos}{\Inout l: \TLista{\ent}}{}
+                  \requiere{\paraTodo{n}{\ent}{n \in l \thenLuego n > 2} \land l = L_0}
+                  \asegura{|l| = |L_0| \yLuego \\
+                  \paraTodo{i}{\ent}{0 \leq i < |l| \thenLuego esElPrimoMasCercano(l[i], L_0[i])}
+                  }
+
+                  \pred{esElPrimoMasCercano}{p, n: \ent}{
+                        esPrimo(p) \land p < n \land \paraTodo{q}{\ent}{(esPrimo(q) \land q < n) \thenLuego q \leq p}
+                  }
+            \end{proc}
+
+      \item Reemplaza todas las apariciones de $a$ en $l$ por $b$.
+
+            \begin{proc}{reemplazar}{\Inout l: \seqchar, \In a,b: \cha}{}
+                  \requiere{l = L_0}
+                  \asegura{|l| = |L_0| \land \\
+                  \paraTodo{i}{\ent}{0 \leq i < |l| \thenLuego l[i] = \If{L_0[i] = a}{b}{L_0[i]}}
+                  }
+            \end{proc}
+
+      \item Elimina los elementos duplicados de $l$ dejando sólo su primera aparición (en el orden original). Devuelva además una secuencia con todas las apariciones eliminadas (en cualquier orden)
+
+            \begin{proc}{limpiarDuplicados}{\Inout l: \seqchar}{\seqchar}
+                  \requiere{l = L_0}
+                  \asegura{} \hacer
+            \end{proc}
+\end{enumerate}
+
+\subsection{Ejercicio 18}
+\hacer
+
 \end{document}
