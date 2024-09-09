@@ -1,0 +1,211 @@
+\input{../macros/macros.tex}
+\input{../macros/AEDmacros.tex}
+
+\begin{document}
+
+\titulo{Guia 3}
+\input{../caratuladc/caratula.tex}
+%Carátula
+\maketitle
+\newpage
+
+%Indice
+\tableofcontents
+\newpage
+
+\section{Guia 3}
+
+\subsection{Ejercicio 1}
+Calcular las siguientes expresiones, donde $a$, $b$ son variables reales, $i$ una variable entera y $A$ es una secuencia de reales.
+
+\begin{multicols}{2}
+    \begin{enumerate}[label=\alph*)]
+        \item $\Def{a + 1} \equiv True$
+        \item $\Def{a / b} \equiv b \neq 0$
+        \item $\Def{\sqrt{a / b}} \equiv b \neq 0 \yLuego a / b \geq 0$
+        \item $\Def{A[i] + 1} \equiv 0 \leq i < |A|$
+        \item $\Def{A[i + 2]} \equiv 0 \leq i + 2 < |A| \equiv -2 \leq i < |A| - 2$
+        \item $\Def{0 \leq i \leq |A| \yLuego A[i] \geq 0} \equiv i \neq |A|$
+    \end{enumerate}
+\end{multicols}
+
+\subsection{Ejercicio 2}
+Calcular las siguientes precondiciones más débiles, donde $a$, $b$ son variables realies, $i$ una variable entera y $A$ es una secuencia de reales.
+
+\begin{enumerate}[label=\alph*)]
+    \item \begin{align*}
+              \wp{a := a+1; b := a/2}{b \geq 0} & \equiv \wp{a := a+1}{\wp{b := a/2}{b \geq 0}}      \\
+                                                & \equiv \wp{a := a+1}{\Def{a/2} \yLuego a/2 \geq 0} \\
+                                                & \equiv \wp{a := a+1}{a \geq 0}                     \\
+                                                & \equiv \Def{a+1} \yLuego a+1 \geq 0                \\
+                                                & \equiv \boxed{a \geq -1}
+          \end{align*}
+
+    \item \begin{align*}
+              \wp{a := A[i] + 1; b := a*a}{b \neq 2} & \equiv \wp{a := A[i] + 1}{\wp{b := a*a}{b \neq 2}}              \\
+                                                     & \equiv \wp{a := A[i] + 1}{a*a \neq 2}                           \\
+                                                     & \equiv \wp{a := A[i] + 1}{|a| \neq \sqrt{2}}                    \\
+                                                     & \equiv \Def{A[i] + 1} \yLuego |A[i] + 1| \neq \sqrt{2}          \\
+                                                     & \equiv \boxed{0 \leq i < |A| \yLuego A[i] \neq -1 \pm \sqrt{2}}
+          \end{align*}
+
+    \item \begin{align*}
+              \wp{a := A[i] + 1; a := b*b}{a \geq 0} & \equiv \wp{a := A[i] + 1}{\wp{a := b*b}{a \geq 0}} \\
+                                                     & \equiv \wp{a := A[i] + 1}{b*b \geq 0}              \\
+                                                     & \equiv \wp{a := A[i] + 1}{|b| \geq 0}              \\
+                                                     & \equiv \wp{a := A[i] + 1}{True}                    \\
+                                                     & \equiv \boxed{0 \leq i < |A|}
+          \end{align*}
+
+    \item \begin{align*}
+              \wp{a := a-b; b := a+b}{a \geq 0 \land b \geq 0} & \equiv \wp{a := a-b}{\wp{b := a+b}{a \geq 0 \land b \geq 0}} \\
+                                                               & \equiv \wp{a := a-b}{a \geq 0 \land a+b \geq 0}              \\
+                                                               & \equiv a-b \geq 0 \land (a-b)+b \geq 0                       \\
+                                                               & \equiv \boxed{a \geq b \land a \geq 0}
+          \end{align*}
+\end{enumerate}
+
+\subsection{Ejercicio 3}
+Sea $Q \equiv \paraTodo{j}{\ent}{0 \leq j < |A| \thenLuego A[j] \geq 0}$. Calcular las siguientes precondiciones más débiles, donde $i$ es una variable entera y $A$ es una secuencia de enteros.
+
+\begin{enumerate}[label=\alph*)]
+    \item \begin{align*}
+              \wp{A[i] := 0}{Q} & \equiv \wp{A := setAt(A, i, 0)}{Q}                                                                                                    \\
+                                & \equiv 0 \leq i < |A| \yLuego Q_{setAt(A, i, 0)}^A                                                                                    \\
+                                & \equiv 0 \leq i < |A| \yLuego \paraTodo{j}{\ent}{0 \leq j < |A| \thenLuego setAt(A, i, 0)[j] \geq 0}                                  \\
+                                & \equiv 0 \leq i < |A| \yLuego \paraTodo{j}{\ent}{0 \leq j < |A| \thenLuego (i = j \Then 0 \geq 0) \land (i \neq j \Then A[i] \geq 0)} \\
+                                & \equiv \boxed{0 \leq i < |A| \yLuego \paraTodo{j}{\ent}{(0 \leq j < |A| \land i \neq j) \thenLuego A[j] \geq 0}}
+          \end{align*}
+
+    \item \begin{align*}
+              \wp{A[i+2] := 0}{Q} & \equiv 0 \leq i+2 < |A| \yLuego Q_{setAt(A, i+2, 0)}^Q                                                                            \\
+                                  & \equiv \ldots \yLuego \paraTodo{j}{\ent}{0 \leq j < |A| \thenLuego (i+2 = j \Then 0 \geq 0) \land (i+2 \neq j \Then A[j] \geq 0)} \\
+                                  & \equiv \boxed{-2 \leq i < |A| - 2 \thenLuego \paraTodo{j}{\ent}{(0 \leq j < |A| \land i+2 \neq j) \thenLuego A[j] \geq 0}}
+          \end{align*}
+
+    \item \hacer
+
+    \item \begin{align*}
+              \wp{A[i] := 2 * A[i]}{Q} & \equiv \wp{A := setAt(A, i, 2 * A[i])}{Q}                                                                                            \\
+                                       & \equiv 0 \leq i < |A| \yLuego Q_{setAt(A, i, 2 * A[i])}^A                                                                            \\
+                                       & \equiv \ldots \yLuego \paraTodo{j}{\ent}{0 \leq j < |A| \thenLuego (i = j \Then 2 * A[i] \geq 0) \land (i \neq j \Then A[j] \geq 0)} \\
+                                       & \equiv \ldots \yLuego \paraTodo{j}{\ent}{0 \leq j < |A| \thenLuego (i = j \Then A[j] \geq 0) \land (i \neq j \Then A[j] \geq 0)}     \\
+                                       & \equiv \boxed{0 \leq i < |A| \yLuego \paraTodo{j}{\ent}{0 \leq j < |A| \thenLuego A[j] \geq 0}}
+          \end{align*}
+
+    \item \hacer
+\end{enumerate}
+
+\subsection{Ejercicio 4}
+Para los siguientes pares de programas $S$ y postcondiciones $Q$
+
+\begin{itemize}
+    \item Escribir la precondición más débil $P = \wp{S}{Q}$
+    \item Mostrar formalmente que la $P$ elegida es correcta
+\end{itemize}
+
+\begin{enumerate}[label=\alph*)]
+    \item $S \equiv$
+
+          \begin{lstlisting}
+        if (a < 0)
+            b := a
+        else
+            b := -a
+        endif
+    \end{lstlisting}
+
+          $Q \equiv (b = - |a|)$
+
+          \begin{align*}
+              \wp{S}{Q} & \equiv (a < 0 \land \wp{b := a}{Q}) \lor (a \geq 0 \land \wp{b := -a}{Q}) \\
+                        & \equiv (a < 0 \land a = - |a|) \lor (a \geq 0 \land -a = - |a|)           \\
+                        & \equiv a < 0 \lor a \geq 0                                                \\
+                        & \equiv True
+          \end{align*}
+
+    \item \hacer
+    \item \hacer
+
+    \item $S \equiv$
+
+          \begin{lstlisting}
+        if (i > 1)
+            s[i] := s[i-1]
+        else
+            s[i] := 0
+        endif
+    \end{lstlisting}
+
+          $Q \equiv \paraTodo{j}{\ent}{1 \leq j < |s| \thenLuego s[j] = s[j - 1]}$
+
+          \[
+              \wp{S}{Q} \equiv (i > 1 \land \wp{s[i] := s[i-1]}{Q}) \lor (i \leq 1 \land \wp{s[i] := 0}{Q})
+          \]
+
+          $
+              \begin{aligned}
+                  \wp{s[i] := s[i - 1]}{Q} & \equiv (0 \leq i < |s| \land 0 \leq i - 1 < |s|) \yLuego Q_{setAt(s, i, s[i-1])}^s              \\
+                                           & \equiv 1 \leq i < |s| \yLuego                                                                   \\
+                                           & \paraTodo{j}{\ent}{1 \leq j < |s| \thenLuego setAt(s, i, s[i-1])[j] = setAt(s, i, s[i-1])[j-1]} \\\\
+                                           & \equiv 1 \leq i < |s| \yLuego                                                                   \\
+                                           & \paraTodo{j}{\ent}{1 \leq j < |s| \thenLuego (i = j \Then s[j-1] = s[j-1]) \land                \\
+                                           & (i = j - 1 \Then s[j] = s[j-2]) \land ((i \neq j \land i \neq j - 1) \Then s[j] = s [j-1])}     \\\\
+                                           & \equiv 1 \leq i < |s| \yLuego                                                                   \\
+                                           & \paraTodo{j}{\ent}{1 \leq j < |s| \yLuego (i = j - 1 \Then s[j] = s[j-2]) \land                 \\
+                                           & ((i \neq j \land i \neq j - 1) \Then s[j] = s[j-1])}
+              \end{aligned}
+          $
+
+          $
+              \begin{aligned}
+                  \wp{s[i] := 0}{Q} & \equiv 0 \leq i < |s| \yLuego Q_{setAt(s, i, 0)}^s                                                                  \\
+                                    & \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{1 \leq j < |s| \thenLuego setAt(s, i, 0)[j] = setAt(s, i, 0)[j-1]} \\
+                                    & \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{1 \leq j < |s| \thenLuego                                          \\
+                                    & (i = j \Then 0 = s[j-1]) \land (i = j-1 \Then s[j] = 0) \land ((i \neq j \land i \neq j-1) \Then s[j] = s[j-1])}
+              \end{aligned}
+          $
+
+          \begin{align*}
+              \wp{S}{Q} & \equiv (1 < i < |s| \yLuego \paraTodo{j}{\ent}{1 \leq j < |s| \yLuego (i = j - 1 \Then s[j] = s[j-2]) \land        \\
+                        & ((i \neq j \land i \neq j - 1) \Then s[j] = s[j-1])})\lor                                                          \\
+                        & (i \leq 1 \land 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{1 \leq j < |s| \thenLuego (i = j \Then 0 = s[j-1]) \land \\
+                        & (i = j-1 \Then s[j] = 0) \land ((i \neq j \land i \neq j-1) \Then s[j] = s[j-1])})
+          \end{align*}
+
+    \item \hacer
+    \item \hacer
+\end{enumerate}
+
+\subsection{Ejercicio 5}
+Para las siguientes especificaciones:
+
+\begin{itemize}
+    \item Poner nombre al problema que resuelven
+    \item Escribir un programa $S$ sencillo en SmallLang, sin ciclos, que lo resuelva
+    \item Dar la precondición más débil del programa escrito con respecto a la postcondición de su especificación
+\end{itemize}
+
+\begin{enumerate}[label=\alph*)]
+    \item \begin{proc}{sumaIesimoElemento}{\In s: \TLista{\ent}, \In i: \ent, \Inout a: \ent}{}
+              \requiere{0 \leq i < |s| \yLuego a = \sum_{j=0}^{i-1} s[j]}
+              \asegura{a = \sum_{j=0}^{i} s[j]}
+          \end{proc}
+
+          \begin{lstlisting}
+            func sumaIesimoElemento(s <int>, i int, a int) {
+                a := a + s[i];
+                return a
+            }
+          \end{lstlisting}
+
+          \begin{align*}
+              \wp{a := a + s[i]}{a = \sum_{j=0}^{i} s[j]} & \equiv 0 \leq i < |s| \yLuego a + s[i] = \sum_{j=0}^{i} s[j]    \\
+                                                          & \equiv \boxed{0 \leq i < |s| \yLuego a = \sum_{j=0}^{i-1} s[j]}
+          \end{align*}
+
+    \item \hacer
+    \item \hacer
+\end{enumerate}
+
+\end{document}

@@ -147,6 +147,8 @@
 	\cuantificador{#1}{\forall}{#2}{#3}{#4}
 }
 
+\newcommand{\Def}[1]{\text{\normalfont\ttfamily def}(#1)}
+
 %listas
 
 \newcommand{\TLista}[1]{\ensuremath{seq \langle #1\rangle}}
@@ -167,10 +169,14 @@
 \newcommand{\matriz}[1]{\TLista{\TLista{#1}}}
 \newcommand{\seqchar}{\TLista{\cha}}
 
+\renewcommand{\wp}[2]{
+	\ensuremath{\textit{wp}(\textbf{\lstinline{#1}}, #2)}
+}
+
 \renewcommand{\lstlistingname}{Código}
 \lstset{% general command to set parameter(s)
 	language=Java,
-	morekeywords={endif, endwhile, skip},
+	morekeywords={func, endif, endwhile, skip},
 	basewidth={0.47em,0.40em},
 	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
 	flexiblecolumns=false, tabsize=4, breaklines, breakatwhitespace=false, extendedchars=true,
