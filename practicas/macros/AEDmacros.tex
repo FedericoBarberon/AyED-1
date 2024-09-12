@@ -173,6 +173,8 @@
 	\ensuremath{\textit{wp}(\textbf{\lstinline{#1}}, #2)}
 }
 
+\newcommand{\hoare}[3]{\ensuremath{\{#1\} \; #2 \; \{#3\}}}
+
 \renewcommand{\lstlistingname}{Código}
 \lstset{% general command to set parameter(s)
 	language=Java,
@@ -183,4 +185,21 @@
 	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
 	frame=l, framesep=3pt,
 	captionpos=b,
+}
+
+% TADs
+
+\newenvironment{tad}[2]{
+	\vspace{1ex}
+	\noindent
+	{\normalfont\bfseries\ttfamily\large TAD} #1 \ifthenelse{\equal{#2}{}}{}{\ensuremath{<#2>}} \{
+	% Abrimos la llave
+	\par%
+	\tocarEspacios
+}{
+	\vspace{1ex} \par\}
+}
+
+\newcommand{\obs}[2]{
+	obs #1: \ensuremath{#2}\par
 }
