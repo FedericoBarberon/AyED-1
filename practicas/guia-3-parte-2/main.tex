@@ -1,0 +1,129 @@
+\input{../macros/macros.tex}
+\input{../macros/AEDmacros.tex}
+
+\begin{document}
+
+\titulo{Guia 3 - Parte 2}
+\input{../caratuladc/caratula.tex}
+%Carátula
+\maketitle
+\newpage
+
+%Indice
+\tableofcontents
+\newpage
+
+\section{Guia 3 - Parte 2}
+
+\subsection{Ejercicio 1}
+Consideremos el problema de sumar los elementos de un arreglo y la siguiente implementación en SmallLang, con el invariante del ciclo.
+
+\begin{multicols}{2}
+    \begin{minipage}{0.4\textwidth}
+        \large\textbf{Especificación}
+
+        \begin{proc}{sumar}{\In s: $array\langle \ent \rangle$}{\ent}
+            \requiere{True}
+            \asegura{res = \sum_{j=0}^{|s| - 1} s[j]}
+        \end{proc}
+    \end{minipage}
+
+    \begin{minipage}{0.4\textwidth}
+        \large\textbf{Implementación en SmallLang}
+
+        \begin{lstlisting}[numbers=none,frame=none,xleftmargin=0pt]
+res := 0;
+i := 0;
+while (i < s.size()) do
+    res := res + s[i];
+    i := i + 1;
+endwhile
+        \end{lstlisting}
+    \end{minipage}
+\end{multicols}
+
+\large\textbf{Invariante del Ciclo}
+
+\[I \equiv 0 \leq i \leq |s| \yLuego res = \sum_{j=0}^{i-1} s[j]\]
+
+\begin{enumerate}[label=\alph*)]
+    \item Escribir la precondición y la postcondición del ciclo.
+
+          $
+              P_c \equiv \{i = 0 \land res = 0\}\\
+              Q_c \equiv \{res = \sum_{j=0}^{|s| - 1} s[j]\}
+          $
+
+    \item ¿Qué punto falla en la demostración de corrección si el primer término del invariante se reemplaza por $0 \leq i < |s|$?
+
+          Falla el punto 3 $(I \land \neg B) \Then Qc$ pues \par
+          $(0 \leq i < |s| \yLuego res = \sum_{j=0}^{i-1} s[j] \land i \geq |s|) \Then Qc \equiv False \Then Qc \equiv True$
+
+          Lo cual está mal pues nada asegura que luego de terminar el ciclo $i = |s|$.
+
+    \item ¿Qué punto falla en la demostración de corrección si el límite superior de la sumatoria $(i - 1)$ se reemplaza por $i$?
+
+          Falla el punto 1 $P_c \Then I$ pues cuando vale $P_c$, $I$ pide que $res = s[0]$, lo cual se contradice con $P_c$.
+
+    \item ¿Qué punto falla en la demostración de corrección si se invierte el orden de las dos instrucciones del cuerpo del ciclo?
+
+          Falla el punto 2 \hoare{I \land B}{S}{I} pues luego de cada iteración $res = \sum_{j=0}^{i} s[j]$ lo cual se contradice con el invariante. Además en la última iteración $res$ se indefine pues trata de acceder a $s[|s|]$.
+
+    \item Mostrar la correción parcial del ciclo, usando los primeros puntos del teorema del invariante.
+
+          \begin{enumerate}[label=\arabic*)]
+              \item $P_c \Then I \equiv (i = 0 \land res = 0) \Then (0 \leq i \leq |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \equiv True$
+
+              \item \hoare{I \land B}{S}{I}
+
+                    Para probar que se cumple hay que probar que $(I \land B) \Then \wp{S}{I}$.
+
+                    \begin{align*}
+                        \wp{S}{I}                   & \equiv \wp{res := res + s[i]; i := i + 1}{I}                                                                           \\
+                                                    & \equiv \wp{res := res + s[i]}{\wp{i := i + 1}{I}}                                                                      \\
+                                                    & \equiv \wp{res := res + s[i]}{0 \leq i + 1 \leq |s| \yLuego res = \sum_{j=0}^{i} s[j]}                                 \\
+                                                    & \equiv 0 \leq i < |s| \yLuego res + s[i] = \sum_{j=0}^{i} s[j]                                                         \\
+                                                    & \equiv 0 \leq i < |s| \yLuego res = \sum_{j=0}^{i-1} s[j]                                                              \\\\
+                        (I \land B) \Then \wp{S}{I} & \equiv (0 \leq i < |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \Then (0 \leq i < |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \\
+                                                    & \equiv True
+                    \end{align*}
+
+              \item \begin{align*}
+                        (I \land \neg B) \Then Q_c & \equiv ((0 \leq i \leq |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \land i \geq |s|) \Then res = \sum_{j=0}^{|s| - 1} s[j] \\
+                                                   & \equiv (i = |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \Then res = \sum_{j=0}^{|s| - 1} s[j]                              \\
+                                                   & \equiv res = \sum_{j=0}^{|s| - 1} s[j] \Then res = \sum_{j=0}^{|s| - 1} s[j]                                            \\
+                                                   & \equiv True
+                    \end{align*}
+          \end{enumerate}
+
+    \item Proponer una función variante y mostrar la terminación del ciclo, utilizando la función variante.
+
+          Propongo la función variante $f_v = |s| - i$. Para probarla tengo que probar lo siguiente:
+
+          \begin{itemize}
+              \item $\hoare{I \land B \land f_v = v_0}{S}{f_v < v_0} \Iff (I \land B \land f_v = v_0) \Then \wp{S}{f_v < v_0}$
+
+                    \begin{align*}
+                        \wp{S}{f_v < v_0} & \equiv \wp{res := res + s[i]}{\wp{i := i + 1}{|s| - i < v_0}} \\
+                                          & \equiv \wp{res := res + s[i]}{|s| - i - 1 < v_0}              \\
+                                          & \equiv 0 \leq i < |s| \yLuego |s| - i - 1 < v_0
+                    \end{align*}
+
+                    $
+                        (I \land B \land f_v = v_0) \Then \wp{S}{f_v < v_0} \\
+                        \equiv (0 \leq i \leq |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \land i < |s| \land |s| - i = v_0 \Then (0 \leq i < |s| \yLuego |s| - i - 1 < v_0) \\
+                        \equiv (0 \leq i < |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \land |s| - i = v_0 \Then (0 \leq i < |s| \yLuego |s| - i - 1 < |s| - i) \\
+                        \equiv True
+                    $
+
+              \item \begin{align*}
+                        I \land f_v \leq 0 \Then \neg B & \equiv (0 \leq i \leq |s| \yLuego res = \sum_{j=0}^{i-1} s[j]) \land |s| - i \leq 0 \Then i \geq |s| \\
+                                                        & \equiv i = |s| \yLuego res = \sum_{j=0}^{i-1} s[j] \Then i \geq |s|                                  \\
+                                                        & \equiv True
+                    \end{align*}
+          \end{itemize}
+
+          De esta manera queda demostrado que el ciclo termina en una cantidad finita de iteraciones y que es correcto.
+\end{enumerate}
+
+\end{document}
