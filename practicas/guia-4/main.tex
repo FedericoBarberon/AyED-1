@@ -1,0 +1,591 @@
+\input{../macros/macros.tex}
+\input{../macros/AEDmacros.tex}
+
+\begin{document}
+
+\titulo{Guia 4}
+\input{../caratuladc/caratula.tex}
+%Carátula
+\maketitle
+\newpage
+
+%Indice
+\tableofcontents
+\newpage
+
+\section{Guia 4}
+
+\subsection{Ejercicio 1}
+Especificar en forma completa el TAD NumeroRacional que incluya las operaciones aritméticas básicas (suma, resta, división, multiplicación) y una operación igual que dados dos números racionales devuelva verdadero si son iguales.
+
+\begin{tad}{Racional}{}
+	\obs{num}{\ent}
+	\obs{den}{\ent}
+	\begin{proc}{crear}{\In num: \ent, \In den: \ent}{\tadtype}
+		\requiere{den \neq 0}
+		\asegura{res.num = num \land res.den = den}
+	\end{proc}
+
+	\begin{proc}{suma}{\Inout r: \tadtype, n: \tadtype}{}
+		\requiere{r = R_0}
+		\asegura{r.num = R_0.num * n.den + n.num * R_0.den \land r.den = R_0.den * n.den}
+	\end{proc}
+
+	\begin{proc}{resta}{\Inout r: \tadtype, n: \tadtype}{}
+		\requiere{r = R_0}
+		\asegura{r.num = R_0.num * n.den - n.num * R_0.den \land r.den = R_0.den * n.den}
+	\end{proc}
+
+	\begin{proc}{multiplicación}{\Inout r: \tadtype, n: \tadtype}{}
+		\requiere{r = R_0}
+		\asegura{r.num = R_0.num * n.num \land r.den = R_0.den * n.den}
+	\end{proc}
+
+	\begin{proc}{división}{\Inout r: \tadtype, n: \tadtype}{}
+		\requiere{n.num \neq 0 \land r = R_0}
+		\asegura{r.num = R_0.num * n.den \land r.den = R_0.den * n.num}
+	\end{proc}
+
+	\begin{proc}{iguales}{\In r: \tadtype, n: \tadtype}{\bool}
+		\asegura{res = \True \Iff r.num * n.den = r.den * n.num}
+	\end{proc}
+\end{tad}
+
+\subsection{Ejercicio 2}
+Especifique mediante TADs los siguientes elementos geométricos:
+
+\begin{enumerate}
+	\item Punto2D, que representa un punto en el plano. Debe contener las siguientes operaciones:
+
+	      \begin{enumerate}[label=\alph*)]
+		      \item \textit{nuevoPunto}: que crea un punto a partir de sus coordenadas $x$ e $y$.
+		      \item \textit{mover}: que mueve el punto una determinada distancia sobre los ejes $x$ e $y$.
+		      \item \textit{distancia}: que devuelve la distancia entre dos puntos:
+		      \item \textit{distanciaAlOrigen}: que devuelve la distancia del punto $(0,0)$.
+	      \end{enumerate}
+
+	\item Rectangulo2D, que representa un rectángulo en el plano. Debe contener las siguientes operaciones:
+
+	      \begin{enumerate}[label=\alph*)]
+		      \item \textit{nuevoRectangulo}: que crea un rectángulo (decida usted cuáles deberían ser los parámetros)
+		      \item \textit{mover}: que mueve el rectángulo una determinada distancia en los ejes $x$ e $y$.
+		      \item \textit{escalar}: que escala el rectángulo en un determinado factor. Al escalar un rectángulo un punto del mismo debe quedar fijo. En este caso el punto fijo puede ser el centro del rectángulo o uno de sus vértices.
+		      \item \textit{estaContenido}: que dados dos rectángulos, indique si uno está contenido en el otro.
+	      \end{enumerate}
+\end{enumerate}
+
+\begin{tad}{Punto2D}{}
+	\obs{x}{\float}
+	\obs{y}{\float}
+
+	\begin{proc}{nuevoPunto}{\In x: \float, \In y: \float}{\tadtype}
+		\asegura{res.x = x \land res.y = y}
+	\end{proc}
+
+	\begin{proc}{mover}{\Inout p: \tadtype, \In dx: \float, \In dy: \float}{}
+		\requiere{p = P_0}
+		\asegura{p.x = P_0.x + dx \land p.y = P_0.y + dy}
+	\end{proc}
+
+	\begin{proc}{distancia}{\In p1: \tadtype, \In p2: \tadtype}{\float}
+		\asegura{res = dist(p1.x, p1.y, p2.x, p2.y)}
+	\end{proc}
+
+	\begin{proc}{distanciaAlOrigen}{\In p: \tadtype}{\float}
+		\asegura{res = dist(p1.x, p1.y, 0, 0)}
+	\end{proc}
+
+	\aux{dist}{x1: \float, y1: \float, x2: \float, y2: \float}{\float}{
+		\displaystyle\sqrt{(x1 - x2)^2 + (y1 - y2)^2}
+	}
+\end{tad}
+
+\begin{tad}{Rectangulo2D}{}
+	\obs{centro}{Punto2D}
+	\obs{largo}{\float}
+	\obs{alto}{\float}
+
+	\begin{proc}{nuevoRectangulo}{\In c: Punto2D, \In l: \float, \In a: \float}{\tadtype}
+		\requiere{l, a > 0}
+		\asegura{res.centro = centro \land res.largo = l \land res.alto = a}
+	\end{proc}
+
+	\begin{proc}{mover}{\Inout r: \tadtype, \In dx: \float, \In dy: \float}{}
+		\requiere{r = R_0}
+		\asegura{r.largo = R_0.largo \land r.alto = R_0.alto}
+		\asegura{r.centro.x = R_0.x + dx \land r.centro.y = R_0.y + dy}
+	\end{proc}
+
+	\begin{proc}{escalar}{\Inout r: \tadtype, $\alpha$ : \float}{}
+		\requiere{r = R_0 \land \alpha \neq 0}
+		\asegura{r.centro = R_0.centro}
+		\asegura{r.largo = \alpha * R_0.largo \land r.alto = \alpha * R_0.alto}
+	\end{proc}
+
+	\begin{proc}{estaContenido}{\In r1: \tadtype, \In r2: \tadtype}{\bool}
+		ESTA MAL\\
+		\asegura{
+			res = \True \Iff esIgualOMasChico(r1, r2) \land \\
+			dist(r1.centro.x,r1.centro.y, r2.centro.x, r2.centro.y) \leq distAlVertice(r1)
+		}
+	\end{proc}
+
+	\pred{esIgualOMasChico}{r1: \tadtype, r2: \tadtype}{
+		r1.largo \leq r2.largo \land r1.alto \leq r2.alto
+	}
+
+	\aux{distAlVertice}{r: \tadtype}{\float}{
+		\displaystyle\sqrt{\left(\frac{r.largo}{2}\right)^2 + \left(\frac{r.alto}{2}\right)^2}
+	}
+\end{tad}
+
+\subsection{Ejercicio 3}
+
+\begin{enumerate}
+	\item Especifique el TAD Cola$<$T$>$ con las siguientes operaciones:
+
+	      \begin{enumerate}[label=\alph*)]
+		      \item \textit{nuevaCola}: que crea una cola vacía.
+		      \item \textit{estáVacía}: que devuelve true si la cola no contiene elementos.
+		      \item \textit{encolar}: que agrega un elemento al final de la cola:
+		      \item \textit{desencolar}: que elimina el primer elemento de la cola y lo devuelve.
+	      \end{enumerate}
+
+	\item Especifique el TAD Pila$<$T$>$ con las siguientes operaciones:
+
+	      \begin{enumerate}[label=\alph*)]
+		      \item \textit{nuevaPila}: que crea una pila vacía
+		      \item \textit{estáVacía}: que devuelve true si la pila no contiene elementos
+		      \item \textit{apilar}: que agrega un elemento al tope de la pila
+		      \item \textit{desapilar}: que elimina el elemento del tope de la pila y lo devuelve
+	      \end{enumerate}
+
+	\item Especifique el TAD DobleCola$<$T$>$, en el que los elementos pueden insertarse al principio o al final y se eliminan por el medio. Debe contener las operaciones \textit{nuevaDobleCola, estáVacía, encolarAdelante, encolarAtrás \textnormal{y} desencolar}
+\end{enumerate}
+
+\begin{tad}{Cola}{T}
+	\obs{data}{\TLista{T}}
+
+	\begin{proc}{nuevaCola}{}{\tadtype}
+		\asegura{res.data = \lv}
+	\end{proc}
+
+	\begin{proc}{estáVacía}{\In c: \tadtype}{\bool}
+		\asegura{res = \True \Iff |c.data| = 0}
+	\end{proc}
+
+	\begin{proc}{encolar}{\Inout c: \tadtype, \In e: T}{}
+		\requiere{c = C_0}
+		\asegura{c.data = \conc{C_0.data, \lrangle{e}}}
+	\end{proc}
+
+	\begin{proc}{desencolar}{\Inout c: \tadtype}{T}
+		\requiere{c = C_0 \land |c.data| > 0}
+		\asegura{c.data = \tail{C_0.data} \land res = \head{C_0.data}}
+	\end{proc}
+\end{tad}
+
+\begin{tad}{Pila}{T}
+	\obs{data}{\TLista{T}}
+
+	\begin{proc}{nuevaPila}{}{\tadtype}
+		\asegura{res.data = \lv}
+	\end{proc}
+
+	\begin{proc}{estáVacía}{\In p: \tadtype}{\bool}
+		\asegura{res = \True \Iff |p.data| = 0}
+	\end{proc}
+
+	\begin{proc}{apilar}{\Inout p: \tadtype, \In e: T}{}
+		\requiere{p = P_0}
+		\asegura{p.data = \conc{\lrangle{e}, P_0.data}}
+	\end{proc}
+
+	\begin{proc}{desapilar}{\Inout p: \tadtype}{T}
+		\requiere{p = P_0 \land |p.data| > 0}
+		\asegura{p.data = \tail{P_0.data} \land res = \head{P_0.data}}
+	\end{proc}
+\end{tad}
+
+\begin{tad}{DobleCola}{T}
+	\obs{data}{\TLista{T}}
+
+	\begin{proc}{nuevaDobleCola}{}{\tadtype}
+		\asegura{res.data = \lv}
+	\end{proc}
+
+	\begin{proc}{estáVacía}{\In c: \tadtype}{\bool}
+		\asegura{res = \True \Iff |c.data| = 0}
+	\end{proc}
+
+	\begin{proc}{encolarAdelante}{\Inout c: \tadtype, \In e: T}{}
+		\requiere{c = C_0}
+		\asegura{c.data = \conc{\lrangle{e}, C_0.data}}
+	\end{proc}
+
+	\begin{proc}{encolarAtrás}{\Inout c: \tadtype, \In e: T}{}
+		\requiere{c = C_0}
+		\asegura{c.data = \conc{C_0.data, \lrangle{e}}}
+	\end{proc}
+
+	\begin{proc}{desencolar}{\Inout c: \tadtype}{T}
+		\requiere{c = C_0 \land |c.data| > 0}
+		\asegura{res = C_0.data[iMedio(C_0.data)] \land\\
+		c.data = \sub{C_0.data, 0, iMedio(C_0.data)} \masmas \sub{C_0.data, iMedio(C_0.data) + 1, |C_0.data|}}
+	\end{proc}
+
+	\aux{iMedio}{s: \TLista{T}}{\ent}{\displaystyle \left\lfloor\; \frac{|s| - 1}{2} \;\right\rfloor}
+\end{tad}
+
+\subsection{Ejercicio 4}
+
+\begin{enumerate}
+	\item Especifique el TAD Diccionario$<K,V>$ con las siguientes operaciones:
+
+	      \begin{enumerate}[label=\alph*)]
+		      \item \textit{nuevoDiccionario}: que crea un diccionario vacío
+		      \item \textit{definir}: que agrega un par clave-valor al diccionario
+		      \item \textit{obtener}: que devuelve el valor asociado a una clave
+		      \item \textit{esta}: que devuelve true si la clave está en el diccionario
+		      \item \textit{borrar}: que elimina una clave del diccionario
+	      \end{enumerate}
+
+	\item Especifique el TAD DiccionarioConHistoria$<K,V>$. El mismo permite consultar, para cada clave, todos los valores que se asociaron con la misma a lo largo dell tiempo (en orden). Se debe poder hacer dicha consulta aún si la clave fue borrada.
+\end{enumerate}
+
+\begin{tad}{Diccionario}{K, V}
+	\obs{data}{\dict{K, V}}
+
+	\begin{proc}{nuevoDiccionario}{}{\tadtype}
+		\asegura{res.data = \{\}}
+	\end{proc}
+
+	\begin{proc}{definir}{\Inout d: \tadtype, \In k: K, \In v: V}{}
+		\requiere{d = D_0}
+		\asegura{d.data = \setKey{D_0.data, k, v}}
+	\end{proc}
+
+	\begin{proc}{obtener}{\In d: \tadtype, \In k: K}{V}
+		\requiere{k \in d.data}
+		\asegura{res = d.data[k]}
+	\end{proc}
+
+	\begin{proc}{esta}{\In d: \tadtype, \In k: K}{\bool}
+		\asegura{res = \True \Iff k \in d.data}
+	\end{proc}
+
+	\begin{proc}{borrar}{\Inout d: \tadtype, \In k: k}{}
+		\requiere{k \in d.data \land d = D_0}
+		\asegura{d.data = \delKey{D_0.data, k}}
+	\end{proc}
+\end{tad}
+
+\begin{tad}{DiccionarioConHistoria}{K, V}
+	\obs{data}{\dict{K, \TLista{V}}}
+
+	\begin{proc}{nuevoDiccionario}{}{\tadtype}
+		\asegura{res.data = \{\}}
+	\end{proc}
+
+	\begin{proc}{definir}{\Inout d: \tadtype, \In k: K, \In v: V}{}
+		\requiere{d = D_0}
+		\asegura{\\
+		(k \in D_0.data \Then d.data = \setKey{D_0.data, k, \conc{\lrangle{v}, D_0.data[k]}}) \land \\
+		(k \notin D_0.data \Then d.data = \setKey{D_0.data, k, \lrangle{v}})
+		}
+	\end{proc}
+
+	\begin{proc}{obtener}{\In d: \tadtype, \In k: K}{V}
+		\requiere{k \in d.data}
+		\asegura{res = d.data[k]}
+	\end{proc}
+
+	\begin{proc}{esta}{\In d: \tadtype, \In k: K}{\bool}
+		\asegura{res = \True \Iff k \in d.data}
+	\end{proc}
+
+	\begin{proc}{borrar}{\Inout d: \tadtype, \In k: k}{}
+		\requiere{k \in d.data \land d = D_0}
+		\asegura{\\
+		(cantValores(D_0, k) = 1 \Then d.data = \delKey{D_0.data, k}) \land \\
+		(cantValores(D_0, k) > 1 \Then d.data = \setKey{D_0.data, k, \tail{D_0.data[k]}})
+		}
+	\end{proc}
+
+	\aux{cantValores}{d: \tadtype, \In k: K}{\ent}{|d.data[k]|}
+\end{tad}
+
+\subsection{Ejercicio 5}
+
+Especifique los TADs indicados a continuación pero utilizando los observadores propuestos:
+
+\begin{enumerate}[label=\alph*)]
+	\item Diccionario\lrangle{K,V} observado con conjunto (de tuplas)
+	\item Conjunto\lrangle{T} observado con funciones
+	\item Pila\lrangle{T} observado con diccionarios
+	\item Punto observado con coordenadas polares
+\end{enumerate}
+
+\begin{tad}{Diccionario}{K,V}
+	\obs{data}{\conj{\tupla{K,V}}}
+
+	\begin{proc}{nuevoDiccionario}{}{\tadtype}
+		\asegura{res.data = \{\}}
+	\end{proc}
+
+	\begin{proc}{definir}{\Inout d: \tadtype, \In k: K, \In v: V}{}
+		\requiere{d = D_0}
+		\asegura{d.data = D_0 \cup \{\lrangle{k,v}\}}
+	\end{proc}
+
+	\begin{proc}{obtener}{\In d: \tadtype, \In k: K}{V}
+		\requiere{perteneceKey(d,k)}
+		\asegura{\paraTodo{t}{\tupla{K,V}}{
+				(t \in d.data \land t_0 = k) \Then res = t_1
+			}}
+	\end{proc}
+
+	\begin{proc}{esta}{\In d: \tadtype, \In k: K}{\bool}
+		\asegura{res = \True \Iff perteneceKey(d, k)}
+	\end{proc}
+
+	\begin{proc}{borrar}{\Inout d: \tadtype, \In k: k}{}
+		\requiere{perteneceKey(d, k) \land d = D_0}
+		\asegura{\paraTodo{t}{\tupla{K,V}}{
+				t \in d.data \Iff (t_0 \neq k \land t \in D_0.data)
+			}}
+	\end{proc}
+
+	\pred{perteneceKey}{d: \tadtype, \In k: K}{
+		\existe{t}{\tupla{K,V}}{t \in d.data \land t_0 = k}
+	}
+\end{tad}
+
+\begin{tad}{Punto}{} \hacer
+	\obs{radio}{\float}
+	\obs{angle}{\float}
+
+	\begin{proc}{nuevoPunto}{\In r: \float, \In a: \float}{\tadtype}
+		\asegura{res.radio = r \land res.angle = a}
+	\end{proc}
+
+	\begin{proc}{mover}{\Inout p: \tadtype, \In dx: \float, \In dy: \float}{}
+		\requiere{p = P_0}
+		\asegura{p.x = P_0.x + dx \land p.y = P_0.y + dy}
+	\end{proc}
+
+	\begin{proc}{distancia}{\In p1: \tadtype, \In p2: \tadtype}{\float}
+		\asegura{res = dist(p1.x, p1.y, p2.x, p2.y)}
+	\end{proc}
+
+	\begin{proc}{distanciaAlOrigen}{\In p: \tadtype}{\float}
+		\asegura{res = dist(p1.x, p1.y, 0, 0)}
+	\end{proc}
+\end{tad}
+
+\subsection{Ejercicio 6}
+Especificar TADs para las siguientes estructuras:
+
+\begin{enumerate}[label=\alph*)]
+	\item Multiconjunto\lrangle{T}
+
+	      También conocido como multiset o bag. Es igual a un conjunto pero con duplicados: cada elemento puede agregarse múltiples veces. Tiene las mismas operaciones que el TAD Conjunto, más una operación que indica la multiplicidad de un elemento (la cantidad de veces que ese elemento se encuentra en la estructura). Nótese que si un elemento es eliminado del multiconjunto, se reduce en 1 la multiplicidad.
+
+	\item Multidict\lrangle{K, V}
+
+	      Misma idea pero para diccionarios: Cada clave puede estar asociada con múltiples valores. Los valores se definen de a uno (indicando una clave y un valor), pero la operación obtener debe devolver todos los valores asociados a una determinada clave.
+
+	      Nota: En este ejercicio deberá tomar algunas decisiones. ¿Se pueden asociar múltiples veces un mismo valor con una clave? ¿Qué pasa en ese caso? Qué parámetros tiene y cómo se comporta la operación borrar? Imagine un caso de uso para esta estructura y utilice su sentido común para tomar estas decisiones.
+\end{enumerate}
+
+\begin{enumerate}[label=\alph*)]
+	\item \begin{tad}{Multiconjunto}{T}
+		      \obs{bag}{\dict{T, \ent}}
+
+		      \begin{proc}{nuevoMulticonjunto}{}{\tadtype}
+			      \asegura{|res.bag| = 0}
+		      \end{proc}
+
+		      \begin{proc}{pertenece}{\In m: \tadtype, \In e: T}{\bool}
+			      \asegura{res = \True \Iff e \in m.bag}
+		      \end{proc}
+
+		      \begin{proc}{agregar}{\Inout m: \tadtype, \In e: T}{}
+			      \requiere{m = M_0}
+			      \asegura{m.bag = \setKey{M_0.bag, e, \If{e \in M_0.bag}{M_0.bag[e] + 1}{1}}}
+		      \end{proc}
+
+		      \begin{proc}{sacar}{\Inout m: \tadtype, \In e: T}{}
+			      \requiere{m = M_0 \land e \in m.bag}
+			      \asegura{
+			      (M_0.bag[e] = 1 \Then m.bag = \delKey{M_0.bag,e}) \land \\
+			      (M_0.bag[e] > 1 \Then m.bag = \setKey{M_0.bag, e, M_0[e] - 1})
+			      }
+		      \end{proc}
+
+		      \begin{proc}{multiplicidad}{\In m: \tadtype, \In e: T}{\ent}
+			      \requiere{e \in m.bag}
+			      \asegura{res = m.bag[e]}
+		      \end{proc}
+	      \end{tad}
+
+	      \pagebreak
+
+	\item \begin{tad}{Multidict}{K, V}
+		      \obs{data}{\dict{K, \TLista{V}}}
+
+		      \begin{proc}{nuevoMultidict}{}{\tadtype}
+			      \asegura{res.data = \{\}}
+		      \end{proc}
+
+		      \begin{proc}{definir}{\Inout m: \tadtype, \In k: K, \In v: V}{}
+			      \requiere{m = M_0}
+			      \asegura[variaslineas]{m.data = \setKey{M_0.data, k, \If{k \in M_0.data}{\conc{\lrangle{v}, M_0.data[k]}}{\lrangle{v}}}}
+		      \end{proc}
+
+		      \begin{proc}{obtener}{\In m: \tadtype, \In k: K}{V}
+			      \requiere{k \in m.data}
+			      \asegura{res = m.data[k]}
+		      \end{proc}
+
+		      \begin{proc}{pertenece}{\In m: \tadtype, \In k: K}{\bool}
+			      \asegura{res = \True \Iff k \in m.data}
+		      \end{proc}
+
+		      \begin{proc}{borrar}{\Inout m: \tadtype, \In k: K}{V}
+			      \requiere{m = M_0 \land k \in m.data}
+			      \asegura[variaslineas]{
+			      res = M_0.data[k][0] \land \\
+			      (|M_0.data[k]| = 1 \Then m.data = \delKey{M_0.data, k}) \land \\
+			      (|M_0.data[k]| > 1 \Then m.data = \setKey{M_0.data, k, \tail{M_0.data[k]}})
+			      }
+		      \end{proc}
+	      \end{tad}
+\end{enumerate}
+
+\subsection{Ejercicio 7}
+Especifique el TAD Contadores que, dada una lista de eventos, permite contar la cantidad de veces que se produjo cada uno de ellos. La lista de eventos es fija. El TAD debe tener una operación para incrementar el contador asociado a un evento y una operación para conocer el valor actual del contador para un evento.
+
+\begin{itemize}
+	\item Modiﬁque el TAD para que sea posible preguntar el valor del contador en un determinado momento del pasado. Si necesita conocer la fecha y hora actual, puede pasarla como parámetro a los procedimientos. Asuma que las fechas son números enteros (por ejemplo, la cantidad de segundos desde el 1 de enero de 1970).
+\end{itemize}
+
+\pagebreak
+
+\begin{tad}{Contadores}{}
+	\obs{eventos}{\dict{\str, \ent}}
+
+	\begin{proc}{nuevoContadores}{\In eventos: \TLista{str}}{\tadtype}
+		\requiere{sinRepetidos(eventos)}
+		\asegura[variaslineas]{
+			\paraTodo{e}{\str}{e \in eventos \Iff e \in res.eventos} \\
+			\paraTodo{e}{\str}{e \in res.eventos \thenLuego res.eventos[e] = 0}
+		}
+	\end{proc}
+
+	\begin{proc}{incrementar}{\Inout c: \tadtype, \In e: \str}{}
+		\requiere{e \in c.eventos \land c = C_0}
+		\asegura{c.eventos = \setKey{C_0.eventos, e, C_0.eventos[e] + 1}}
+	\end{proc}
+
+	\begin{proc}{cantidadDeVeces}{\In c: \tadtype, \In e: \str}{\ent}
+		\requiere{e \in c.eventos}
+		\asegura{res = c.eventos[e]}
+	\end{proc}
+
+	\pred{sinRepetidos}{s: \TLista{T}}{
+		\paraTodo{i, j}{\ent}{0 \leq i < j < |s| \thenLuego s[i] \neq s[j]}
+	}
+\end{tad}
+
+\begin{tad}{ContadoresConFecha}{} \hacer \par
+	\obs{eventos}{\dict{\str, \TLista{\ent}}}
+
+	\begin{proc}{nuevoContadores}{\In eventos: \TLista{str}}{\tadtype}
+		\requiere{sinRepetidos(eventos)}
+		\asegura[variaslineas]{
+			\paraTodo{e}{\str}{e \in eventos \Iff e \in res.eventos} \\
+			\paraTodo{e}{\str}{e \in res.eventos \thenLuego res.eventos[e] = \lv}
+		}
+	\end{proc}
+
+	\begin{proc}{incrementar}{\Inout c: \tadtype, \In e: \str, \In fechaActual: \ent}{}
+		\requiere{e \in c.eventos \land c = C_0}
+		\asegura{c.eventos = \setKey{C_0.eventos, e, \conc{C_0.eventos[e], \lrangle{fechaActual}}}}
+	\end{proc}
+
+	\begin{proc}{cantidadDeVeces}{\In c: \tadtype, \In e: \str, \In fechaEvento: \ent}{\ent}
+		\requiere{e \in c.eventos}
+		\asegura{}
+	\end{proc}
+
+	\pred{sinRepetidos}{s: \TLista{T}}{
+		\paraTodo{i, j}{\ent}{0 \leq i < j < |s| \thenLuego s[i] \neq s[j]}
+	}
+\end{tad}
+
+\subsection{Ejercicio 8}
+Un caché es una capa de almacenamiento de datos de alta velocidad que almacena un subconjunto de datos, normalmente transitorios, de modo que las solicitudes futuras de dichos datos se atienden con mayor rapidez que si se debe acceder a los datos desde la ubicación de almacenamiento principal. El almacenamiento en caché permite reutilizar de forma eficaz los datos recuperados o procesados anteriormente.
+
+Esta estructura comunmente tiene una interface de diccionario: guarda valores asociados a claves, con la diferencia de que los datos almacenados en un cache pueden desaparecer en cualquier momento, en función de diferentes criterios.
+
+Especificar caches genéricos (con claves de tipo $K$ y valores de tipo $V$) que respeten las operaciones indicadas y las siguientes políticas de borrado automático. Si necesita conocer la fecha y hora actual, puede pasarla como parámetro a los procedimientos o bien puede asumir que existe una función externa $horaActual(): \ent$ que retorna la fecha y hora actual.
+
+Asuma que las fechas son números enteros (por ejemplo, la cantidad de segundos desde el 1 de enero de 1970).
+
+\begin{enumerate}[label=\alph*)]
+	\item FIFO o first-in-fist-out:
+	      El cache tiene una capacidad máxima (máximo número de claves). Si se alcanza esa capacidad máxima se borra automáticamente la clave que fue deﬁnida por primera vez hace más tiempo.
+
+	\item LRU o last-recently-used:
+	      El cache tiene una capacidad máxima (máximo número de claves). Si se alcanza esa capacidad máxima se borra automáticamente la clave que fue accedida por última vez hace más tiempo. Si no fue accedida nunca, se considera el momento en que fue agregada.
+
+	\item TTL o time-to-live:
+	      El cache tiene asociado un máximo tiempo de vida para sus elementos. Los elementos se borran automáticamente cuando se alcanza el tiempo de vida (contando desde que fueron agregados por última vez).
+\end{enumerate}
+
+\begin{tad}{CacheFIFO}{K, V}
+	\obs{data}{\dict{K, V}}
+	\obs{orden}{\TLista{K}}
+	\obs{max}{\ent}
+
+	\begin{proc}{nuevaCache}{\In max: \ent}{\tadtype}
+		\requiere{max > 0}
+		\asegura{res.data = \{\} \land res.orden = \lv \land res.max = max}
+	\end{proc}
+
+	\begin{proc}{esta}{\In c: \tadtype, \In k: K}{\bool}
+		\asegura{res = \True \Iff k \in c.data}
+	\end{proc}
+
+	\begin{proc}{obtener}{\In c: \tadtype, \In k: K}{V}
+		\requiere{k \in c.data}
+		\asegura{res = c.data[k]}
+	\end{proc}
+
+	\begin{proc}{definir}{\Inout c: \tadtype, \In k: K, \In v: V}{}
+		\requiere{c = C_0}
+		\asegura[variaslineas]{
+		c.max = C_0.max\\
+		(k \in C_0.data \Then c.data = \setKey{C_0, k, v} \land mueveAlFinal(c, C_0, k, v)) \land \\
+		(k \notin C_0.data \Then (c.data = \setKey{\delKey{C_0, C_0.orden[0]}, k, v} \land \\
+		poneAlFinal(c, C_0, k) \land sacaElPrimero(c, C_0)))
+		}
+	\end{proc}
+
+	\pred{mueveAlFinal}{c: \tadtype, $C_0$: \tadtype, k: K}{
+	{
+	|c.orden| = |C_0.orden| \yLuego \\ \existe{i}{\ent}{0 \leq i < |C_0.orden| \yLuego C_0.orden[i] = k \land \paraTodo{j}{\ent}{i < j < |C_0.orden| \thenLuego c.orden[j-1] = c.orden[j]}} \land c.orden[|c.orden| - 1] = k
+	}
+	}
+
+	\pred{poneAlFinal}{c: \tadtype, $C_0$: \tadtype, k: K}{
+		c.orden = \conc{C_0.orden, \lrangle{k}}
+	}
+
+	\pred{sacaElPrimero}{c: \tadtype, $C_0$: \tadtype}{
+		c = \sub{C_0, 1, |C_0|}
+	}
+\end{tad}
+
+\end{document}
