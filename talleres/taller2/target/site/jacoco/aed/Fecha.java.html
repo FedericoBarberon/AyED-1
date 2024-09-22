@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Fecha.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">labo2</a> &gt; <a href="index.source.html" class="el_package">aed</a> &gt; <span class="el_source">Fecha.java</span></div><h1>Fecha.java</h1><pre class="source lang-java linenums">package aed;
+
+public class Fecha {
+    private int dia;
+    private int mes;
+
+<span class="fc" id="L7">    public Fecha(int dia, int mes) {</span>
+<span class="fc" id="L8">        this.dia = dia;</span>
+<span class="fc" id="L9">        this.mes = mes;</span>
+<span class="fc" id="L10">    }</span>
+
+<span class="fc" id="L12">    public Fecha(Fecha fecha) {</span>
+<span class="fc" id="L13">        dia = fecha.dia;</span>
+<span class="fc" id="L14">        mes = fecha.mes;</span>
+<span class="fc" id="L15">    }</span>
+
+    public Integer dia() {
+<span class="fc" id="L18">        return dia;</span>
+    }
+
+    public Integer mes() {
+<span class="fc" id="L22">        return mes;</span>
+    }
+
+    public String toString() {
+<span class="fc" id="L26">        return dia + &quot;/&quot; + mes;</span>
+    }
+
+    @Override
+    public boolean equals(Object otra) {
+<span class="pc bpc" id="L31" title="1 of 4 branches missed.">        if (otra == null || otra.getClass() != this.getClass()) {</span>
+<span class="fc" id="L32">            return false;</span>
+        }
+
+<span class="fc" id="L35">        Fecha otraFecha = (Fecha) otra;</span>
+
+<span class="fc bfc" id="L37" title="All 4 branches covered.">        return (dia == otraFecha.dia &amp;&amp; mes == otraFecha.mes);</span>
+    }
+
+    public void incrementarDia() {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (dia == diasEnMes(mes)) {</span>
+<span class="fc" id="L42">            dia = 1;</span>
+
+<span class="fc" id="L44">            mes = mes % 12 + 1;</span>
+        } else {
+<span class="fc" id="L46">            dia++;</span>
+        }
+<span class="fc" id="L48">    }</span>
+
+    private int diasEnMes(int mes) {
+<span class="fc" id="L51">        int dias[] = {</span>
+                // ene, feb, mar, abr, may, jun
+                31, 28, 31, 30, 31, 30,
+                // jul, ago, sep, oct, nov, dic
+                31, 31, 30, 31, 30, 31
+        };
+<span class="fc" id="L57">        return dias[mes - 1];</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

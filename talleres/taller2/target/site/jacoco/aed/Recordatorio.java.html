@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Recordatorio.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">labo2</a> &gt; <a href="index.source.html" class="el_package">aed</a> &gt; <span class="el_source">Recordatorio.java</span></div><h1>Recordatorio.java</h1><pre class="source lang-java linenums">package aed;
+
+public class Recordatorio {
+    private String mensaje;
+    private Fecha fecha;
+    private Horario horario;
+
+<span class="fc" id="L8">    public Recordatorio(String mensaje, Fecha fecha, Horario horario) {</span>
+<span class="fc" id="L9">        this.mensaje = mensaje;</span>
+<span class="fc" id="L10">        this.fecha = new Fecha(fecha);</span>
+<span class="fc" id="L11">        this.horario = horario;</span>
+<span class="fc" id="L12">    }</span>
+
+    public Horario horario() {
+<span class="fc" id="L15">        return horario;</span>
+    }
+
+    public Fecha fecha() {
+<span class="fc" id="L19">        return new Fecha(fecha);</span>
+    }
+
+    public String mensaje() {
+<span class="fc" id="L23">        return mensaje;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L28">        return String.format(&quot;%s @ %s %s&quot;, mensaje, fecha, horario);</span>
+    }
+
+    @Override
+    public boolean equals(Object otro) {
+<span class="pc bpc" id="L33" title="2 of 4 branches missed.">        if (otro == null || otro.getClass() != this.getClass()) {</span>
+<span class="nc" id="L34">            return false;</span>
+        }
+
+<span class="fc" id="L37">        Recordatorio otroRecordatorio = (Recordatorio) otro;</span>
+
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        return (mensaje == otroRecordatorio.mensaje &amp;&amp;</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">                fecha.equals(otroRecordatorio.fecha) &amp;&amp;</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                horario.equals(otroRecordatorio.horario));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
