@@ -126,4 +126,129 @@ endwhile
           De esta manera queda demostrado que el ciclo termina en una cantidad finita de iteraciones y que es correcto.
 \end{enumerate}
 
+\subsection{Ejercicio 2}
+Dadas la especificación y la implementación del problema sumarParesHastaN
+
+\begin{multicols}{2}
+    \begin{minipage}{0.4\textwidth}
+        \large\textbf{Especificación}
+
+        \begin{proc}{sumarParesHastaN}{\In n: \ent}{\ent}
+            \requiere{n \geq 0}
+            \asegura{res = \sum_{j=0}^{n-1} \\ \If{j \mod 2 = 0}{j}{0}}
+        \end{proc}
+    \end{minipage}
+
+    \begin{minipage}{0.4\textwidth}
+        \large\textbf{Implementación en SmallLang}
+
+        \begin{lstlisting}[numbers=none,frame=none,xleftmargin=0pt]
+res := 0;
+i := 0;
+while (i < n) do
+    res := res + i;
+    i := i + 2;
+endwhile
+        \end{lstlisting}
+    \end{minipage}
+\end{multicols}
+
+\large\textbf{Invariante del Ciclo}
+
+\[I \equiv 0 \leq i \leq n + 1 \land i \mod 2 = 0 \land res = \sum_{j=0}^{i-1} \If{j \mod 2 = 0}{j}{0}\]
+
+\begin{enumerate}[label=\alph*)]
+    \item Escribir la precondición y la poscondición del ciclo.
+    \item Mostrar la correción parcial del ciclo, usando los primeros puntos el teorema del invariante.
+    \item Proponer una función variante y mostrar la terminación del ciclo, utilizando la función variante
+\end{enumerate}
+
+\begin{enumerate}[label=\alph*)]
+    \item \begin{align*}
+              P_c & \equiv \{res = 0 \land i = 0\}                            \\
+              Q_c & \equiv \{res = \sum_{j=0}^{n-1} \If{j \mod 2 = 0}{j}{0}\}
+          \end{align*}
+
+    \item Para probar la correctitud parcial del programa tengo que probar los siguientes items:
+
+          $P_c \Then I$:
+
+          Con $res = 0 \land i = 0$ se tiene que
+          %
+          \begin{align*}
+              I & \equiv 0 \leq 0 \leq n + 1 \land 0 \mod 2 = 0 \land 0 = \sum_{j=0}^{-1}\If{j \mod 2 = 0}{j}{0} \\
+                & \equiv True
+          \end{align*}
+
+          Por lo tanto $P_c \Then I$ es verdadero.
+          \bigskip
+
+          \hoare{I \land B}{S}{I}
+
+          Para probar esto tengo que ver si $(I \land B) \Then \wp{S}{I}$
+          %
+          \begin{align*}
+              \wp{S}{I} & \equiv \wp{res := res + i}{\wp{i := i + 2}{I}}                                                                 \\
+                        & \equiv \wp{res := res + i}{0 \leq i + 2 \leq n + 1 \land (i+2) \mod 2 = 0 \land res = \sum_{j=0}^{i+1} \ldots} \\
+                        & \equiv -2 \leq i \leq n - 1 \land i \mod 2 = 0 \land res + i = \sum_{j=0}^{i+1} \If{j \mod 2 = 0}{j}{0}        \\
+                        & \equiv -2 \leq i \leq n - 1 \land i \mod 2 = 0 \land res = \sum_{j=0}^{i-2} \If{j \mod 2 = 0}{j}{0}
+          \end{align*}
+
+          Ahora quiero ver si $(I \land B) \Then \wp{S}{I}$:
+          %
+          \begin{align*}
+              I \land B & \equiv (0 \leq i \leq n + 1 \land i \mod 2 = 0 \land res = \sum_{j=0}^{i-1} \If{j \mod 2 = 0}{j}{0}) \land i < n \\
+                        & \equiv 0 \leq i < n \land i \mod 2 = 0 \land res = \sum_{j=0}^{i-1} \If{j \mod 2 = 0}{j}{0}
+          \end{align*}
+
+          y como $(0 \leq i < n) \Then( -2 \leq i \leq n - 1)$ y \par
+          $\sum_{j=0}^{i-2} \If{j \mod 2 = 0}{j}{0} = \sum_{j=0}^{i-1} \If{j \mod 2 = 0}{j}{0}$ pues $i$ es par, entonces se cumple la implicación.
+          \bigskip
+
+          $(I \land \neg B) \Then Q_c$:
+
+          Se tiene que
+          %
+          \begin{align*}
+              I \land \neg B & \equiv (0 \leq i \leq n + 1 \land i \mod 2 = 0 \land res = \sum_{j=0}^{i-1} \If{j \mod 2 = 0}{j}{0}) \land i \geq n \\
+                             & \equiv n \leq i \leq n + 1 \land i \mod 2 = 0 \land res = \sum_{j=0}^{i-1} \If{j \mod 2 = 0}{j}{0}                  \\
+                             & \equiv (n \mod 2 = 0 \Then res = \sum_{j=0}^{n-1} \If{j \mod 2 = 0}{j}{0}) \land                                    \\
+                             & \mathrel{\hphantom{\equiv}} (n \mod 2 \neq 0 \Then res = \sum_{j=0}^{n} \If{j \mod 2 = 0}{j}{0})                    \\
+                             & \equiv res = \sum_{j=0}^{n} \If{j \mod 2 = 0}{j}{0}
+          \end{align*}
+
+          que es exactamente igual a $Q_c$
+          \medskip
+
+          De esta manera queda probada la correctitud parcial del programa.
+
+    \item Propongo la función variante $f_v = n - i$ y la verifico con el teorema de terminación.
+
+          \hoare{I \land B \land f_v = v_0}{S}{f_v < v_0}
+
+          Para probar eso tengo que probar que $(I \land B \land f_v = v_0) \Then \wp{S}{f_v < v_0}$.
+          %
+          \begin{align*}
+              \wp{S}{f_v < v_0} & \equiv \wp{res := res + i}{\wp{i := i + 2}{n - i < v_0}} \\
+                                & \equiv \wp{res := res + i}{n - i - 2 < v_0}              \\
+                                & \equiv n - i - 2 < v_0
+          \end{align*}
+
+          Por lo tanto
+          %
+          \begin{align*}
+              ((0 \leq i < n \land i \mod 2 = 0 \land res = \ldots) \land n - i = v_0) \Then n - i - 2 < v_0 & \equiv n - i - 2 < n - i  \\
+                                                                                                             & \equiv -2 < 0 \equiv True
+          \end{align*}
+
+          Ahora solo queda probar $(I \land f_v \leq 0) \Then \neg B$
+          %
+          \begin{align*}
+              (I \land f_v \leq 0) \Then \neg B & \equiv ((0 \leq i \leq n + 1 \land i \mod 2 = 0 \land res = \ldots) \land n - i \leq 0) \Then i \geq n                \\
+                                                & \equiv (\underline{n \leq i} \leq n + 1 \land i \mod 2 = 0 \land res = \ldots) \Then \underline{i \geq n} \equiv True
+          \end{align*}
+
+          De esta manera queda demostrado que el programa efectivamente termina y no se cuelga, por lo tanto, la implementación es correcta con respecto a la especificación.
+\end{enumerate}
+
 \end{document}
