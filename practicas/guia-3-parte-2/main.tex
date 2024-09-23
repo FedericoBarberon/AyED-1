@@ -251,4 +251,64 @@ endwhile
           De esta manera queda demostrado que el programa efectivamente termina y no se cuelga, por lo tanto, la implementación es correcta con respecto a la especificación.
 \end{enumerate}
 
+\subsection{Ejercicio 11}
+Dados los siguientes ciclos y sus respectivas precondición ($P_c$) y poscondición ($Q_c$).
+
+\begin{enumerate}
+    \item Proponer un invariante ($I$) y una función variante ($f_v$) para el ciclo
+    \item Demostrar los siguientes pasos de la demostración de correctitud del ciclo
+
+          \begin{enumerate}[label=\roman*)]
+              \item $P_c \Then I$
+              \item $(I \land \neg B) \Then Q_c$
+              \item $(I \land f_v \leq 0) \Then \neg B$
+          \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[label=\alph*)]
+    \item \hacer
+    \item \hacer
+    \item $P_c \equiv \{i = |s| - 1 \land res = 0\}$
+
+          \begin{lstlisting}
+while i >= 0 do
+    res := res + s[i] + 1;
+    i := i - 1;
+endwhile
+    \end{lstlisting}
+
+          $Q_c \equiv \{res = |s| + \sum_{j=0}^{|s| - 1} s[j]\}$
+
+          Propongo el invariante $I \equiv \{-1 \leq i < |s| \land res = |s| - 1 - i + \sum_{j=i+1}^{|s| - 1} s[j]\}$ y la función variante $f_v = i + 1$
+
+          \begin{enumerate}[label=\roman*)]
+              \item $P_c \Then I$
+
+                    Cuando vale $P_c$, es decir, cuando $i = |s| - 1$ y $res = 0$ se tiene que
+
+                    \[-1 \leq |s| - 1 < |s| \land 0 = |s| - 1 - i \sum_{j=|s|}^{|s| - 1} s[j] \equiv True\]
+
+                    Por lo tanto $P_c \Then I$ es $True$.
+
+              \item $(I \land \neg B) \Then Q_c$
+
+                    Se tiene que $\neg B \equiv i < 0$, por lo que el invariante queda de la siguiente manera:
+
+                    \[i = -1 \land res = |s| - 1 - i \sum_{j=i+1}^{|s| - 1} s[j] + 1 \equiv res = |s| + \sum_{j = 0}^{|s| - 1} s[j] \equiv Q_c\]
+
+                    Por lo tanto $(I \land \neg B) \Then Q_c$ es $True$.
+
+              \item $(I \land f_v \leq 0) \Then \neg B$
+
+                    Reemplazando se tiene que:
+
+                    \begin{align*}
+                         & ((-1 \leq i < |s| \land \underbrace{res = |s| - 1 - i + \sum_{j=i+1}^{|s| - 1} s[j]}_{\text{No me aporta nada}}) \land i + 1 \leq 0) \Then i < 0 \\
+                         & \equiv i = -1 \Then i < 0 \equiv True
+                    \end{align*}
+          \end{enumerate}
+
+          De esta manera quedan demostrado los 3 pasos pedidos de la correctitud del ciclo.
+\end{enumerate}
+
 \end{document}

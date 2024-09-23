@@ -608,6 +608,38 @@ Especificar los siguientes problemas de modificación de secuencias:
 \end{enumerate}
 
 \subsection{Ejercicio 18}
-\hacer
+Especificar los siguientes problemas. En todos los casos es recomendable ayudarse escribiendo predicados y funciones auxiliares.
+
+\begin{enumerate}[label=\alph*)]
+      \item \hacer
+      \item Se desea especificar el problema ordenarYBuscarMayor que dada una secuencia s de enteros (que puede tener repetidos) ordena dicha secuencia en orden creciente de valor absoluto y devuelve el valor del máximo elemento. Por ejemplo,
+
+            \begin{itemize}
+                  \item $ordenarYBuscarMayor([1,4,3,5,6,2,7]) = [1,2,3,4,5,6,7], 7$
+                  \item $ordenarYBuscarMayor([1,-2,2,5,1,4,-2,-10]) = [1,1,-2,-2,2,4,5,-10], 5$
+                  \item $ordenarYBuscarMayor([-10,-3,-7,-9]) = [-3,-7,-9,-10], -3$
+            \end{itemize}
+
+            \begin{proc}{ordenarYBuscarMayor}{\Inout s: \TLista{\ent}}{\ent}
+                  \requiere{s = S_0}
+                  \asegura{|s| = |S_0| \land mismosElementos(s, S_0) \land esElMayor(res, s) \land ordenadaPorAbs(s)}
+
+                  \pred{mismosElementos}{s1: \TLista{\ent}, s2: \TLista{\ent}}{
+                        \paraTodo{e}{\ent}{e \in s1 \Iff e \in s2}
+                  }
+
+                  \pred{esElMayor}{m: \ent, s: \TLista{\ent}}{
+                        m \in s \land \paraTodo{e}{\ent}{e \in s \Then e \leq m}
+                  }
+
+                  \pred{ordenadaPorAbs}{s: \TLista{\ent}}{
+                  \paraTodo{i}{\ent}{0 \leq i < |s| - 1 \thenLuego |\,s[i]\,| \leq |\,s[i+1]\,|}
+                  }
+            \end{proc}
+
+      \item \hacer
+      \item \hacer
+      \item \hacer
+\end{enumerate}
 
 \end{document}

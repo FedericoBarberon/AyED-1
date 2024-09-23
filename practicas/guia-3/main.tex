@@ -208,4 +208,57 @@ Para las siguientes especificaciones:
     \item \hacer
 \end{enumerate}
 
+\subsection{Ejercicio 7}
+Dado el siguiente condicional determinar la precondición más débil que permite hacer valer la poscondición ($Q$) propuesta. Se pide:
+
+\begin{itemize}
+    \item Describir en palabras la WP esperada
+    \item Derivarla formalmente a partir de los axiomas de precondión mas débil. Para obtener el puntaje máximo deberá simplificarla lo más posible.
+\end{itemize}
+
+\begin{enumerate}[label=\alph*)]
+    \item \hacer
+    \item \hacer
+    \item \hacer
+    \item $Q \equiv \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego s[j] \mod 3 = 0}$
+
+          $S \equiv$
+          \begin{lstlisting}
+if i mod 3 == 0 then
+    s[i] = s[i] + 6;
+else
+    s[i] = i;
+endif
+    \end{lstlisting}
+
+          Se espera que $i$ este en el rango de $s$, que $i$ sea divisible por 3 y que todos los elementos de $s$ sean divisibles por 3.
+
+          \[
+              \wp{S}{Q} \equiv (i \mod 3 = 0 \land \wp{s[i] = s[i] + 6}{Q}) \lor (i \mod 3 \neq 0 \land \wp{s[i] = i}{Q})
+          \]
+
+          \begin{itemize}
+              \item $
+                        \wp{s[i] = s[i] + 6}{Q} \\
+                        \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego (i = j \Then (s[j] + 6) \mod 3 = 0) \land (i \neq j \Then s[j] \mod 3 = 0)} \\
+                        \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego s[j] \mod 3 = 0}
+                    $
+
+              \item $
+                        \wp{s[i] = i}{Q} \\
+                        \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego (i = j \Then j \mod 3 = 0) \land (i \neq j \Then s[j] \mod 3 = 0)} \\
+                        \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{(0 \leq j < |s| \land i \neq j) \thenLuego s[j] \mod 3 = 0} \land i \mod 3 = 0
+                    $
+          \end{itemize}
+
+          La segunda expresión de la disyunción de la WP es \textit{False} pues queda $(i \mod 3 \neq 0 \land \ldots \land i \mod 3 = 0)$ lo cual es una contradicción.
+
+          Por lo que la WP queda de la siguiente manera:
+          %
+          \[\wp{S}{Q} \equiv i \mod 3 = 0 \land 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego s[j] \mod 3 = 0}\]
+
+          Tal y como se esperaba.
+    \item \hacer
+\end{enumerate}
+
 \end{document}

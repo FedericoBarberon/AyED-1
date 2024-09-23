@@ -575,7 +575,7 @@ Asuma que las fechas son números enteros (por ejemplo, la cantidad de segundos 
 
 	\pred{mueveAlFinal}{c: \tadtype, $C_0$: \tadtype, k: K}{
 	{
-	|c.orden| = |C_0.orden| \yLuego \\ \existe{i}{\ent}{0 \leq i < |C_0.orden| \yLuego C_0.orden[i] = k \land \paraTodo{j}{\ent}{i < j < |C_0.orden| \thenLuego c.orden[j-1] = c.orden[j]}} \land c.orden[|c.orden| - 1] = k
+	|c.orden| = |C_0.orden| \yLuego \existe[variaslineas]{i}{\ent}{0 \leq i < |C_0.orden| \yLuego C_0.orden[i] = k \land \paraTodo{j}{\ent}{i < j < |C_0.orden| \thenLuego c.orden[j-1] = c.orden[j]}} \land c.orden[|c.orden| - 1] = k
 	}
 	}
 
@@ -586,6 +586,92 @@ Asuma que las fechas son números enteros (por ejemplo, la cantidad de segundos 
 	\pred{sacaElPrimero}{c: \tadtype, $C_0$: \tadtype}{
 		c = \sub{C_0, 1, |C_0|}
 	}
+\end{tad}
+
+\begin{tad}{CacheLRU}{K, V}
+	\hacer
+\end{tad}
+
+\begin{tad}{CacheTTL}{K, V}
+	\hacer
+\end{tad}
+
+\subsection{Ejercicio 10}
+Queremos modelar el funcionamiento de un vivero. El vivero arranca su actividad sin ninguna planta y con un monto inicial de dinero.
+
+Las plantas las compramos en un mayorista que nos vende la cantidad que deseemos pero solamente de a una especie por vez. Como vivimos en un país con inflación, cada vez que vamos a comprar tenemos un precio diferente para la misma planta. Para poder comprar plantas tenemos que tener suficiente dinero disponible, ya que el mayorista no acepta fiarnos.
+
+A cada planta le ponemos un precio de venta por unidad. Ese precio tenemos que poder cambiarlo todas las veces que necesitemos. Para simplificar el problema, asumimos que las plantas las vendemos de a un ejemplar (cada venta involucra un solo ejemplar de una única especie). Por supuesto que para poder hacer una venta tenemos que tener stock de esa planta y tenemos que haberle fijado un precio previamente. Además, se quiere saber en todo momento cuál es el balance de caja,
+es decir, el dinero que tiene disponible el vivero.
+
+\begin{enumerate}[label=\alph*)]
+	\item Indique las operaciones (procs) del TAD con todos sus parámetros.
+	\item Describa el TAD en forma completa, indicando sus observadores, los requiere y asegura de las operaciones. Puede agregar los predicados y funciones auxiliares que necesite, con su correspondiente definición.
+	\item ¿Qué cambiaría si supiéramos a priori que cada vez que compramos en el mayorista pagamos exactamente el 10\% más que la vez anterior? Describa los cambios en palabras.
+\end{enumerate}
+
+Tomé la decisión de representar una especie sin precio definido poniendo $precio = -1$
+
+\begin{tad}{Vivero}{}
+	\obs{plantas}{\dict{\str, \struct{precio: \float, stock: \ent}}}
+	\obs{dinero}{\float}
+
+	\begin{proc}{nuevoVivero}{\In monto: \float}{\tadtype}
+		\requiere{monto \geq 0}
+		\asegura{res.plantas = \{\} \land res.dinero = monto}
+	\end{proc}
+
+	\begin{proc}{comprar}{\Inout v: \tadtype, \In especie: \str, \In cantidad: \ent, \In precios: \dict{\str, \float}}{}
+		\requiere{especie \in precios \yLuego v.dinero \geq precios[especie] \land v = V_0}
+		\asegura[variaslineas]{
+			v.dinero = V_0.dinero - precios[especie] \land \\
+			(hayEspecie(V_0, especie) \Then \\
+			\Indent v.plantas = actualizarEspecie(V_0, especie, precio(V_0, especie), stock(V_0, especie) + cantidad)) \land \\
+			(\neg hayEspecie(V_0, especie) \Then v.plantas = actualizarEspecie(V_0, especie, -1, cantidad))
+		}
+	\end{proc}
+
+	\begin{proc}{ponerPrecio}{\Inout v: \tadtype, \In especie: \str, \In precio: \float}{}
+		\requiere{hayEspecie(v, especie) \land v = V_0 \land precio \geq 0}
+		\asegura[variaslineas]{
+			v.dinero = V_0.dinero \land \\
+			v.plantas = actualizarEspecie(V_0, especie, precio, stock(V_0, especie))
+		}
+	\end{proc}
+
+	\begin{proc}{vender}{\Inout v: \tadtype, \In especie: \str}{}
+		\requiere{hayEspecie(v, especie) \yLuego stock(v, especie) > 0 \land precio(v, especie) \neq -1 \land v = V_0}
+		\asegura[variaslineas]{
+			v.dinero = V_0.dinero + precio(V_0, especie) \land \\
+			(stock(V_0, especie) = 1 \Then v.plantas = eliminarEspecie(V_0, especie)) \land \\
+			(stock(V_0, especie) > 1 \Then \\
+			\Indent v.plantas = actualizarEspecie(V_0, especie, precio(V_0, especie), stock(V_0, especie) - 1))
+		}
+	\end{proc}
+
+	\pagebreak
+
+	\begin{proc}{obtenerBalance}{\In v: \tadtype}{\float}
+		\asegura{res = v.dinero}
+	\end{proc}
+
+	\aux{precio}{v: \tadtype, especie: \str}{\float}{
+		v.plantas[especie].precio
+	}
+
+	\aux{stock}{v: \tadtype, especie: \str}{\ent}{
+		v.plantas[especie].stock
+	}
+
+	\aux{actualizarEspecie}{v: \tadtype, e: \str, p: \float, s: \ent}{\dict{\str, \struct{precio: \float, stock: \ent}}}{\\
+		\Indent \setKey{v.plantas, e, \{precio: p, stock: s\}}
+	}
+
+	\aux{eliminarEspecie}{v: \tadtype, e: \str}{\dict{\str, \struct{precio: \float, stock: \ent}}}{\\
+		\Indent \delKey{v.plantas, especie}
+	}
+
+	\pred{hayEspecie}{v: \tadtype, especie: \str}{especie \in v.plantas}
 \end{tad}
 
 \end{document}
