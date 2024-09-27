@@ -611,7 +611,21 @@ Especificar los siguientes problemas de modificación de secuencias:
 Especificar los siguientes problemas. En todos los casos es recomendable ayudarse escribiendo predicados y funciones auxiliares.
 
 \begin{enumerate}[label=\alph*)]
-      \item \hacer
+      \item Se desea especificar el problema $reemplazarNumerosPerfectos$, que dada una secuencia de enteros devuelve la secuencia pero con los valores que se corresponden con números perfectos reemplazados por el índice donde se encuentran. Se llama números perfectos a aquellos naturales mayores a cero que son iguales a la suma de sus divisores positivos propios (divisores incluyendo al 1 y sin incluir al propio número). Por ejemplo, $reemplazarNumerosPerfectos([0, 3, 9, 6, 4, 28, 7]) = [0, 3, 9, 3, 4, 5, 7]$, donde los únicos números reemplazados son el 6 y el 28 porque son los únicos números perfectos de la secuencia.
+
+            \begin{proc}{reemplazarNumerosPerfectos}{\In s: \TLista{\ent}}{\TLista{\ent}}
+                  \requiere{True}
+                  \asegura{|res| = |s| \yLuego \paraTodo{i}{\ent}{0 \leq i < |s| \thenLuego res[i] = \IfThenElse{esPerfecto(s[i])}{i}{s[i]}}}
+
+                  \pred{esPerfecto}{n: \ent}{
+                        n > 0 \land n = sumaDivisores(n)
+                  }
+
+                  \aux{sumaDivisores}{n: \ent}{\ent}{
+                        \sum_{i=1}^{n-1} \IfThenElse{n \mod i = 0}{i}{0}
+                  }
+            \end{proc}
+
       \item Se desea especificar el problema ordenarYBuscarMayor que dada una secuencia s de enteros (que puede tener repetidos) ordena dicha secuencia en orden creciente de valor absoluto y devuelve el valor del máximo elemento. Por ejemplo,
 
             \begin{itemize}
@@ -637,9 +651,52 @@ Especificar los siguientes problemas. En todos los casos es recomendable ayudars
                   }
             \end{proc}
 
-      \item \hacer
-      \item \hacer
-      \item \hacer
+      \item Se desea especificar el problema $primosEnCero$ que dada una secuencia $s$ de enteros devuelve la secuencia pero con los valores que se encuentran en posiciones correspondientes a un número primo reemplazados por 0. Por ejemplo,
+
+            \begin{itemize}
+                  \item $primosEnCero([0,1,2,3,4,5,6]) = [0,1,0,0,4,0,6]$
+                  \item $primosEnCero([5,7,-2,13,-9,1]) = [5,7,0,0,-9,0]$
+            \end{itemize}
+
+            \begin{proc}{primosEnCero}{\In \TLista{\ent}}{\TLista{\ent}}
+                  \requiere{True}
+                  \asegura{|res| = |s| \yLuego \paraTodo{i}{\ent}{0 \leq i < |s| \thenLuego res[i] = \If{esPrimo[s[i]]}{0}{s[i]}}}
+
+                  \pred{esPrimo}{n: \ent}{
+                        \paraTodo{i}{\ent}{1 < i < |n| \thenLuego n \mod i \neq 0}
+                  }
+            \end{proc}
+
+      \item Se desea especificar el problema positivosAumentados que dada una secuencia s de enteros devuelve la secuencia pero con los valores positivos reemplazados por su valor multiplicado por la posición en que se encuentra.
+
+            \begin{itemize}
+                  \item $positivosAumentados([0,1,2,3,4,5]) = [0,1,4,9,16,25]$
+                  \item $positivosAumentados([-2,-1,5,3,0,-4,7]) = [-2,-1,10,9,0,-4,42]$
+            \end{itemize}
+
+            \begin{proc}{positivosAumentados}{\In s: \TLista{\ent}}{\TLista{\ent}}
+                  \requiere{True}
+                  \asegura{|res| = |s| \yLuego \paraTodo{i}{\ent}{0 \leq i < |s| \thenLuego res[i] = aumentaPositivos(s, i)}}
+
+                  \aux{aumentaPositivos}{s: \TLista{\ent}, i: \ent}{\ent}{
+                        \If{s[i] > 0}{s[i] * i}{s[i]}
+                  }
+            \end{proc}
+
+      \item Se desea especificar el problema $procesarPrefijos$ que dada una secuencia $s$ de palabras y una palabra $p$, remueve todas las palabras de $s$ que no tengan como prefijo a $p$ y además retorna la longitud de la palabra más larga que tiene de prefijo a $p$. Por ejemplo, dados:
+
+            $s = ["casa", "calamar", "banco", "recuperatorio", "aprobar", "cansado"]$ y $p = "ca"$ un posible valor para la secuencia s luego de aplicar $procesarPrefijos(s, p)$ puede ser $["casa", "calamar", "cansado"]$ y el valor devuelto será 7.
+
+            \begin{proc}{procesarPrefijos}{\Inout s: \TLista{\str}, \In p: \str}{\ent}
+                  \requiere{s = S_0 \land \existe{s1}{\str}{s1 \in s \land esPrefijo(p, s1)}}
+                  \asegura{|s| \leq |S_0| \yLuego \paraTodo{s1}{\str}{s1 \in s \Iff (s1 \in S_0 \land esPrefijo(p, s1))}}
+                  \asegura{\existe{i}{\ent}{0 \leq i < |s| \yLuego |s[i]| = res}}
+                  \asegura{\paraTodo{i}{\ent}{0 \leq i < |s| \thenLuego |s[i]| \leq res}}
+
+                  \pred{esPrefijo}{p: \str, s: \str}{
+                        \paraTodo{i}{\ent}{0 \leq i < |p| \thenLuego s[i] = p[i]}
+                  }
+            \end{proc}
 \end{enumerate}
 
 \end{document}

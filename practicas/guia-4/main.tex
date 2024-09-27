@@ -674,4 +674,117 @@ Tomé la decisión de representar una especie sin precio definido poniendo $prec
 	\pred{hayEspecie}{v: \tadtype, especie: \str}{especie \in v.plantas}
 \end{tad}
 
+\subsection{Ejercicio 12}
+Se desea modelar mediante un TAD un videojuego de guerra desde el punto de vista de un único jugador.
+
+En el videojuego es posible ir a las tabernas y contratar mercenarios. Al contratarlo se nos informa el indicador de poder que tiene y el costo que tienen sus servicios. El poder de un mercenario siempre es positivo, sino nadie querría contratarlo. Los mercenarios no aceptan una promesa de pago, por lo que el jugador deberá tener el dinero suficiente para pagarle. El jugador puede juntar la cantidad de mercenarios que desee para poder formar batallones. El poder de los batallones es igual a la suma del poder de cada uno de los mercenarios que lo componen. Cada mercenario puede pertenecer a un solo batallón.
+
+El jugador comienza con un monto de dinero inicial determinado por el juego. A su vez, comienza con un sólo territorio bajo su  ominio. El objetivo del juego es conquistar la mayor cantidad de territorios posible para dominar el continente. Para ello, el jugador puede tomar uno de sus batallones y atacar un territorio enemigo. Al momento de atacar se conoce la fuerza del batallón enemigo. El jugador resulta vencedor si tiene más poder que el enemigo, en ese caso se anexa el territorio y se ganan 1000 monedas. Caso contrario, se debe pagar por la derrota una suma de 500 monedas. El jugador no puede ir a pelear si no tiene dinero para financiar su derrota.
+
+Además, se desea saber en todo momento la cantidad de territorios anexados y el dinero disponible.
+Se pide:
+
+\begin{enumerate}[label=\alph*)]
+	\item Indique las operaciones (procs) del TAD con todos sus parámetros.
+	\item Describa el TAD en forma completa, indicando sus observadores, los requiere y asegura de las operaciones. Puede agregar los predicados y funciones auxiliares que necesite, con su correspondiente definición.
+\end{enumerate}
+
+Dinero es \float
+
+Territorio es \str
+
+Poder es \ent
+
+Mercenario es \struct{nombre: \str, poder: Poder}
+
+Taberna es \dict{\str, \struct{mercenario: Mercenario, precio: Dinero}}
+
+Batallon es \conj{\str}
+\bigskip
+
+(DUDO que este bien hecho el TAD)
+
+\pagebreak
+
+\begin{tad}{Jugador}{}
+	\obs{nombre}{\str}
+	\obs{territorios}{\conj{Territorio}}
+	\obs{mercenarios}{\conj{Mercenario}}
+	\obs{dinero}{Dinero}
+	\obs{batallones}{\dict{\str, Batallon}}
+
+	\begin{proc}{nuevoJugador}{\In n: \str}{\tadtype}
+		\asegura{res.nombre = n}
+		\asegura{|res.territorios| = 1 \yLuego \paraTodo[multLineas]{j}{\tadtype}{j.nombre \neq res.nombre \thenLuego res.territorios[0] \notin j.territorios}}
+		\asegura{res.mercenarios = \{\}}
+		\asegura{res.dinero = 10000}
+		\asegura{res.batallones = \lv}
+	\end{proc}
+
+	\begin{proc}{contratarMercenario}{\Inout j: \tadtype, \In n: \str, \In t: Taberna}{}
+		\requiere{tieneMercenariosValidos(t)}
+		\requiere{n \in t \yLuego j.dinero \geq t[n].precio}
+		\requiere{j = J_0}
+
+		\asegura{j.nombre = J_0.nombre}
+		\asegura{j.territorios = J_0.territorios}
+		\asegura{j.batallones = J_0.batallones}
+		\asegura{j.dinero = J_0.dinero - t[n].precio}
+		\asegura{j.mercenarios = J_0.mercenarios \cup t[n].mercenario}
+
+		\pred{tieneMercenariosValidos}{t: Taberna}{
+			\paraTodo[multLineas]{n}{\str}{
+				n \in t \thenLuego t[n].mercenario.nombre = n \land t[n].mercenario.poder > 0 \land t[n].precio > 0
+			}
+		}
+	\end{proc}
+
+	\begin{proc}{formarBatallon}{\Inout j: \tadtype, \In n: \str, \In ln: \conj{\str}}{}
+		\requiere{n \notin j.batallones \land tengaMercenarios(j, ln) \land mercenariosDisponibles(j, ln)}
+		\requiere{j = J_0}
+
+		\asegura{j.nombre = J_0.nombre}
+		\asegura{j.territorios = J_0.territorios}
+		\asegura{j.mercenarios = J_0.mercenarios}
+		\asegura{j.dinero = J_0.dinero}
+		\asegura{j.batallones = \setKey{J_0.batallones, n, ln}}
+
+		\pred{tengaMercenarios}{j: \tadtype, ln: \conj{\str}}{
+			\paraTodo{s}{\str}{s \in ln \Then \existe{m}{Mercenario}{m \in j.mercenarios \land m.nombre = s}}
+		}
+
+		\pred{mercenariosDisponibles}{j: \tadtype, ln: \conj{\str}}{
+			\paraTodo{s}{\str}{s \in ln \Then \neg \existe{b}{\str}{b \in j.batallones \yLuego s \in j.batallones[b]}}
+		}
+	\end{proc}
+
+	\pagebreak
+
+	\begin{proc}{atacar}{\Inout j: \tadtype, \In t: Territorio, \In b: Batallon, \In pE: Poder}{Tipo de res}
+		\requiere{j.dinero \geq 500 \land t \notin j.territorios \land b \in j.batallones}
+		\requiere{j = J_0}
+		\asegura{j.nombre = J_0.nombre}
+		\asegura{j.mercenarios = J_0.mercenarios}
+		\asegura{j.batallones = J_0.batallones}
+		\asegura[variaslineas]{(tieneBatallonMasFuerte(j, b, pE) \Then j.dinero = J_0.dinero + 1000 \land j.territorios = J_0.territorios \cup t) \\
+			\land (\neg tieneBatallonMasFuerte(j, b, pE) \Then j.dinero = J_0.dinero - 500)
+		}
+
+		\pred{tieneBatallonMasFuerte}{j: \tadtype, b: Batallon, pE: Poder}{
+			\existe[multLineas]{s}{\TLista{Poder}}{|s| = |b| \land
+				\paraTodo{m}{Mercenario}{(m \in j.mercenarios \land m.nombre \in b) \Then m.poder \in s} \land \\
+				pE < \sum_{i=0}^{|s| - 1} s[i]
+			}
+		}
+	\end{proc}
+
+	\begin{proc}{cantidadTerritorios}{\In j: \tadtype}{\ent}
+		\asegura{res = |j.territorios|}
+	\end{proc}
+
+	\begin{proc}{dineroDisponible}{\In j: \tadtype}{Dinero}
+		\asegura{res = j.dinero}
+	\end{proc}
+\end{tad}
+
 \end{document}

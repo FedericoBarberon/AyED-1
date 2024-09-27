@@ -217,7 +217,41 @@ Dado el siguiente condicional determinar la precondición más débil que permit
 \end{itemize}
 
 \begin{enumerate}[label=\alph*)]
-    \item \hacer
+    \item $Q \equiv \{\paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego s[j] > 0}\}$
+
+          $S \equiv$
+          \begin{lstlisting}
+if s[i] < 0 then
+    s[i]  := -s[i]
+else
+    s[i] := 0
+endif
+    \end{lstlisting}
+
+          Se espera que $i$ este en el rango de $s$, que $s[i] < 0$ y que todos los elementos en posisicones distintas de $i$ sean mayores a 0.
+
+          \[\wp{S}{Q} \equiv 0 \leq i < |s| \yLuego (s[i] < 0 \land \wp{s[i] := -s[i]}{Q}) \lor (s[i] \geq 0 \land \wp{s[i] := 0}{Q})\]
+
+          \begin{itemize}
+              \item $
+                        \wp{s[i] := -s[i]}{Q} \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego setAt(s,i,-s[i])[j] > 0} \\
+                        \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{(0 \leq j < |s| \land j \neq i) \thenLuego s[j] > 0} \land -s[i] > 0
+                    $
+
+              \item $
+                        \wp{s[i] := 0}{Q} \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego setAt(s,i,0) > 0} \\
+                        \equiv 0 \leq i < |s| \yLuego \paraTodo{j}{\ent}{(0 \leq j < |s| \land j \neq i) \thenLuego s[j] > 0} \land 0 > 0 \\
+                        \equiv False
+                    $
+          \end{itemize}
+
+          De esta manera, juntado todo queda:
+
+          \begin{align*}
+              \wp{S}{Q} & \equiv 0 \leq i < |s| \yLuego (s[i] < 0 \land \paraTodo{j}{\ent}{(0 \leq j < |s| \land j \neq i) \thenLuego s[j] > 0} \land -s[i] > 0) \\
+                        & \equiv \boxed{0 \leq i < |s| \yLuego (s[i] < 0 \land \paraTodo{j}{\ent}{(0 \leq j < |s| \land j \neq i) \thenLuego s[j] > 0})}
+          \end{align*}
+
     \item \hacer
     \item \hacer
     \item $Q \equiv \paraTodo{j}{\ent}{0 \leq j < |s| \thenLuego s[j] \mod 3 = 0}$
