@@ -125,7 +125,8 @@
 
 % Tipos
 
-\newcommand{\nat}{\ensuremath{\mathds{N}}}
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\reals}{\ensuremath{\mathbb{R}}}
 \newcommand{\ent}{\ensuremath{\mathds{Z}}}
 \newcommand{\float}{\ensuremath{\mathds{R}}}
 \newcommand{\bool}{\ensuremath{\mathsf{Bool}}}
@@ -207,7 +208,7 @@
 \renewcommand{\lstlistingname}{Código}
 \lstset{% general command to set parameter(s)
 	language=Java,
-	morekeywords={func, endif, endwhile, skip},
+	morekeywords={func, endif, endwhile, skip, end, var},
 	basewidth={0.47em,0.40em},
 	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
 	flexiblecolumns=false, tabsize=4, breaklines, breakatwhitespace=false, extendedchars=true,
@@ -248,3 +249,48 @@
 \newcommand{\obs}[2]{
 	obs #1: \ensuremath{#2}\par
 }
+
+\newenvironment{module}[4]{
+\newcommand{\tadtype}{%
+	\ensuremath{#3 \ifblank{#4}{}{\lrangle{#4}}}
+}
+
+\newcommand{\moduletype}{%
+	\ensuremath{#1 \ifblank{#2}{}{\lrangle{#2}}}
+}
+
+
+\renewcommand{\pred}[3]{%
+{\normalfont\bfseries\ttfamily pred }%
+	{\normalfont\ttfamily ##1}%
+\ifthenelse{\equal{##2}{}}{}{\ (##2) }%
+\{%
+\begin{adjustwidth}{+5em}{}
+	\ensuremath{##3}
+\end{adjustwidth}
+\}
+{\normalfont\bfseries\,\par}%
+}
+
+\vspace{1ex}
+\noindent
+{\normalfont\bfseries\ttfamily\large Módulo #1\ifthenelse{\equal{#2}{}}{}{$<$#2$>$} implementa #3\ifthenelse{\equal{#4}{}}{}{$<$#4$>$}} \{
+% Abrimos la llave
+\par%
+\tocarEspacios
+}{
+\vspace{1ex} \par\}
+}
+
+\newcommand{\var}[2]{
+	var #1: \;\ensuremath{#2}\par
+}
+\newcommand{\compl}[1]{Complejidad: $#1$}
+
+% Tipos de datos de implementación
+\newcommand{\Int}{\ensuremath{\mathsf{int}}}
+\newcommand{\Real}{\ensuremath{\mathsf{real}}}
+\newcommand{\Bool}{\ensuremath{\mathsf{bool}}}
+\newcommand{\Char}{\ensuremath{\mathsf{char}}}
+\newcommand{\String}{\ensuremath{\mathsf{string}}}
+\newcommand{\Array}[1]{\ensuremath{\mathsf{Array<#1>}}}
