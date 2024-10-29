@@ -11,7 +11,6 @@ La correctitud de los ejercicios de las guías prácticas **NO ESTÁ GARANTIZADA
 | [**Práctica 3**](/practicas/guia-3/main.pdf)     |
 | [**Práctica 3.2**](/practicas/guia-3-parte-2/main.pdf)     |
 | [**Práctica 4**](/practicas/guia-4/main.pdf)     |
-| [**Práctica 5**](/practicas/guia-5/main.pdf)     |
 | [**Práctica 6**](/practicas/guia-6/main.pdf)     |
 
 | Talleres                               |
