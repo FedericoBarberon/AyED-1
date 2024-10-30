@@ -1,0 +1,326 @@
+\input{../macros/macros.tex}
+\input{../macros/AEDmacros.tex}
+
+\begin{document}
+
+\titulo{Guia 7}
+\input{../caratuladc/caratula.tex}
+%Carátula
+\maketitle
+\newpage
+
+%Indice
+\tableofcontents
+\newpage
+
+\section{Guia 7}
+
+\subsection{Ejercicio 1}
+Implementamos un \textbf{Árbol Binario} (AB)
+
+\begin{itemize}
+	\item Escriba en castellano el invariante de representación para este módulo
+	\item Escriba en lógica el invrep usando preds recursivos
+	\item Escriba los algoritmos para los siguientes procs y, de ser posible, calcule su complejidad
+	      \begin{itemize}
+		      \item altura(in ab: ArbolBinario$<$T$>$): int
+		      \item cantidadHojas(in ab: ArbolBinario$<$T$>$): int
+		      \item está(in ab: ArbolBinario$<$T$>$, in t: T): bool
+		      \item cantidadApariciones(in ab: ArbolBinario$<$T$>$, in t: T): int
+	      \end{itemize}
+\end{itemize}
+
+\newcommand{\nodo}{\text{Nodo$<$T$>$}}
+
+\nodo es \struct{dato: T, izq: Nodo, der: Nodo}
+
+\begin{module}{ArbolBinario}{T}{Arbol Binario}{T}
+	\var{raiz}{\nodo}
+	\medskip
+	InvRep: No tiene ciclos y la raiz es null o el subarbol derecho y el izquierdo son AB
+
+	\pred{esAB}{r: \nodo}{
+		r = null \oLuego (esAB(r.der) \land esAB(r.izq))
+	}
+
+	\pred{InvRep}{ab: \moduletype}{
+		sinCiclos(ab.raiz) \land esAB(ab.raiz)
+	}
+
+	\begin{proc}{altura}{\In ab: \moduletype}{\Int}
+		\compl{O(n) \leftarrow n = cantNodos}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return altura(ab.raiz);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{alturaAux}{\In r: \nodo}{\Int}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null:
+			return 0;
+		endif
+	
+		return 1 + max(alturaAux(r.izq), alturaAux(r.der));
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantidadHojas}{\In ab: \moduletype}{\Int}
+		\compl{O(n)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return cantidadHojasAux(ab.raiz);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantidadHojasAux}{\In r: \nodo}{\Int}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null
+			return 0;
+		else if r.izq == null && r.der == null
+			return 1;
+		endif
+
+		return cantidadHojasAux(r.izq) + cantidadHojasAux(r.der);
+		\end{lstlisting}
+	\end{proc}
+
+	\pagebreak
+
+	\begin{proc}{esta}{\In ab: \moduletype}{\bool}
+		\compl{O(n)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return estaAux(r.raiz, e);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{estaAux}{\In r: \nodo, \In e: T}{\bool}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null
+			return false;
+		else if r.dato == e
+			return true;
+		else
+			return estaAux(r.izq, e) || estaAux(r.der, e);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantidadApariciones}{\In ab: \moduletype, \In e: T}{\Int}
+		\compl{O(n)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return cantidadAparicionesAux(ab.raiz, e);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantidadAparicionesAux}{\In r: \nodo, \In e: T}{\Int}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var cant: int;
+		cant := 0;
+
+		if r == null
+			return 0;
+		else if r.dato == e:
+			cant := 1;
+		endif
+		
+		return cant + cantidadAparicionesAux(r.izq, e) + cantidadAparicionesAux(r.der, e);
+		\end{lstlisting}
+	\end{proc}
+
+\end{module}
+
+\subsection{Ejercicio 2}
+Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple que para cualquier nodo N, todos los elementos del árbol a la izquierda son menores o iguales al valor del nodo y todos los elementos del árbol a la derecha son mayores al valor del nodo, es decir
+
+\pred{esABB}{a: \nodo}{
+	a = null \lor (\\
+	\paraTodo{e}{T}{e \in elems(a.izq) \Then e \leq a.dato} \land \paraTodo{e}{T}{e \in elems(a.der) \Then e > a.dato} \land \\
+	esABB(a.izq) \land esABB(a.der) \\
+	)
+}
+
+\aux{elems}{a: \nodo}{\conj{T}}{
+	\If{a = null}{\emptyset}{\{a.dato\} \cup elems(a.izq) \cup elems(a.der)}
+}
+
+\begin{itemize}
+	\item Implemene los algoritmos para los siguientes procs y calcule su complejidad en mejor y peor caso
+	      \begin{enumerate}
+		      \item está(in ab: ABB$<$T$>$, in t: T): bool
+		      \item cantidadApariciones(in ab: ABB$<$T$>$, in t: T): int
+		      \item insertar(inout ab: ABB$<$T$>$, in t: T)
+		      \item eliminar(inout ab: ABB$<$T$>$, in t: T)
+		      \item inOrder(in ab: ABB$<$T$>$): Array$<$T$>$
+	      \end{enumerate}
+
+	\item Asumiendo que el árbol está balanceado, recalcule, si es necesario, las complejidads en peor caso de los algoritmos del ítem anterior
+	\item ¿Qué pasa en un ABB cuando se insertan valores repetidos? Proponga una modificación del módulo que resuelva este problema
+\end{itemize}
+
+\begin{module}{ABB}{T}{Arbol Binario De Busqueda}{T}
+	\var{raiz}{\nodo}
+
+	\begin{proc}{esta}{\In ab: \moduletype, \In t: T}{\bool}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		return estaAux(ab.raiz, t);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{estaAux}{\In r: \nodo, \In t: T}{\bool}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r.dato == t
+			return true;
+		else if t > r.dato
+			return estaAux(r.der, t);
+		else
+			return estaAux(r.izq, t);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantidadApariciones}{\In ab: \moduletype, \In t: T}{\Int}
+		Mejor caso: $\Theta(1)$ \\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		return cantidadAparicionesAux(ab.raiz, t);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantidadAparicionesAux}{\In r: \nodo, \In t: T}{\Int}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null
+			return 0;
+		else if r.dato == t
+			return 1 + cantidadAparicionesAux(r.izq, t);
+		else if r.dato > t
+			return cantidadAparicionesAux(r.der, t);
+		else
+			return cantidadAparicionesAux(r.izq, t);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{insertar}{\Inout ab: \moduletype, \In t: T}{}
+		Mejor caso: $\Theta(1)$ \\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		ab.raiz := insertarAux(ab.raiz, t);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{insertarAux}{\Inout r: \nodo, \In t: T}{\nodo}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null
+			r := new Nodo < T >;
+			r.dato := t;
+		else if t <= r.dato
+			r.izq := insertarAux(r.izq, t);
+		else
+			r.der := insertarAux(r.der, t);
+		endif
+
+		return r;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{eliminar}{\Inout ab: \moduletype, \In t: T}{}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		ab.raiz := eliminarAux(ab.raiz, t);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{eliminarAux}{\Inout r: \nodo, \In t: T}{\nodo}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null
+			return null
+		else if r.dato == t
+			if r.izq != null && r.der != null
+				r.dato = minimo(r.der);
+				r.der = eliminarAux(r.der,r.dato);
+			else if r.izq != null
+				return r.izq;
+			else
+				return r.der;
+			endif
+		else if t > r.dato
+			r.der := eliminarAux(r.der, t);
+		else
+			r.izq := eliminarAux(r.izq, t);
+		endif
+
+		return r;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{minimo}{\In r: \nodo}{T}
+		\begin{lstlisting}[numbers=none,frame=none]
+		while r.izq != null do
+			r := r.izq;
+		endwhile
+
+		return r.dato;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{inOrder}{\In ab: \moduletype}{\Array{T}}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		var cola: ColaSobreLista < T >;
+		cola := colaVacia();
+
+		inOrderAux(cola, ab.raiz);
+
+		return colaAArray(cola, cantidadNodos(ab.raiz));
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{inOrderAux}{\Inout c: ColaSobreLista$<$T$>$,\In r: \nodo}{}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null
+			return;
+		endif
+
+		inOrderAux(c, r.izq);
+		c.encolar(r.dato);
+		inOrderAux(c, r.der);
+		\end{lstlisting}
+	\end{proc}
+
+	\pagebreak
+
+	\begin{proc}{colaAArray}{\Inout c: ColaSobreLista$<$T$>$, \In size: \Int}{\Array{T}}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var res: Array < T >;
+		var i: int;
+		res := new Array < T >(size);
+		i := 0;
+
+		while !c.vacia() do
+			res[i] := c.desencolar();
+			i := i + 1;
+		endwhile
+
+		return res;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantidadNodos}{\In r: \nodo}{\Int}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if r == null
+			return 0;
+		else
+			return 1 + cantidadNodos(r.der) + cantidadNodos(r.izq);
+		endif
+		\end{lstlisting}
+	\end{proc}
+\end{module}
+
+Si el arbol está balanceado entonces la complejidad en el peor caso de los algoritmos está, insertar y eliminar pasa a ser $\Theta(\log{n})$
+\medskip
+
+Si se insertar valores repetidos, según el enunciado, estos se insertaran en el subarbol izquierdo del nodo con ese mismo valor (no se cual sería el problema)
+\end{document}
