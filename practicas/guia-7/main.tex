@@ -171,11 +171,9 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 	\begin{proc}{nuevoABB}{}{\moduletype}
 		\compl{O(1)}
 		\begin{lstlisting}[numbers=none,frame=none]
-		var ab: ABB < T >;
-		ab := new ABB < T >;
-		ab.raiz := new Nodo < T >;
-		ab.size := 0;
-		return ab;
+		res.raiz := new Nodo < T >;
+		res.size := 0;
+		return res;
 		\end{lstlisting}
 	\end{proc}
 
@@ -360,10 +358,8 @@ Recalcule, si es necesario, las complejidades en peor caso de los algoritmos de 
 	\begin{proc}{conjVacio}{}{\moduletype}
 		\compl{O(1)}
 		\begin{lstlisting}[numbers=none,frame=none]
-		var conj: ConjuntoABB < T >;
-		conj := new ConjuntoABB < T >;
-		conj.elems := nuevoABB();
-		return conj;
+		res.elems := nuevoABB();
+		return res;
 		\end{lstlisting}
 	\end{proc}
 

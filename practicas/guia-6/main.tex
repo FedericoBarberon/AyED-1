@@ -33,7 +33,6 @@ $>$
 
 	\begin{proc}{NuevaListaVacía}{}{\moduletype}
 		\begin{lstlisting}[numbers=none,frame=none]
-		res := new ListaEnlazada< T >
 		res.primero := null
 		res.ultimo := null
 		res.longitud := 0
@@ -138,6 +137,8 @@ $>$
 		\end{lstlisting}
 \end{proc}
 
+\pagebreak
+
 \begin{proc}{eliminar}{\Inout l: \moduletype, \In indice: \Int}{}
 	\compl{O(n)}
 	\begin{lstlisting}[numbers=none,frame=none]
@@ -227,12 +228,9 @@ Implemente el TAD ConjuntoAcotado$<$T$>$ (definido en el apunte de TADs) usando 
 	\begin{proc}{conjVacío}{\In capacidad: \Int}{\moduletype}
 		\compl{O(1)}
 		\begin{lstlisting}[numbers=none,frame=none]
-		var conj: ConjuntoArr < T >;
-
-		conj := new ConjuntoArr < T >;
-		conj.datos := new Array < T >[capacidad];
-		conj.tamano := 0;
-		return conj;
+		res.datos := new Array < T >[capacidad];
+		res.tamano := 0;
+		return res;
 		\end{lstlisting}
 	\end{proc}
 
@@ -283,13 +281,7 @@ Implemente el TAD ConjuntoAcotado$<$T$>$ (definido en el apunte de TADs) usando 
 
 		while i < c1.tamano do
 			if !c2.pertenece(c1.datos[i])
-				if i = c1.tamano - 1
-					c1.datos[i] := null;
-				else
-					c1.datos[i] := c1.datos[c1.tamano - 1]
-					c1.datos[c1.tamano - 1] := null;
-				endif
-
+				c1.datos[i] := c1.datos[c1.tamano - 1]
 				c1.tamano := c1.tamano - 1;
 			endif
 			i := i + 1;
@@ -308,13 +300,7 @@ Implemente el TAD ConjuntoAcotado$<$T$>$ (definido en el apunte de TADs) usando 
 		endwhile
 
 		if i < c.tamano
-			if i == c.tamano - 1
-				c.datos[i] := null;
-			else
-				c.datos[i] := c.datos[c.tamano - 1];
-				c.datos[c.tamano - 1] := null;
-			endif
-
+			c.datos[i] := c.datos[c.tamano - 1];
 			c.tamano := c.tamano - 1;
 		endif
 		\end{lstlisting}
@@ -324,7 +310,7 @@ Implemente el TAD ConjuntoAcotado$<$T$>$ (definido en el apunte de TADs) usando 
 \subsection{Ejercicio 3}
 Implemente el TAD Conjunto$<$T$>$ (definido en el apunte de TADs) usando la siguiente estructura.
 
-\begin{module}{ConjuntoLista}{TAD}{Conjunto}{T}
+\begin{module}{ConjuntoLista}{T}{Conjunto}{T}
 	\var{datos}{\mathsf{ListaEnlazada<T>}}
 	\var{tamaño}{\Int}
 \end{module}
@@ -337,7 +323,7 @@ Implemente el TAD Conjunto$<$T$>$ (definido en el apunte de TADs) usando la sigu
 	\item Calcule la complejidad de cada una de estas operaciones
 \end{itemize}
 
-\begin{module}{ConjuntoLista}{TAD}{Conjunto}{T}
+\begin{module}{ConjuntoLista}{T}{Conjunto}{T}
 	\var{datos}{\mathsf{ListaEnlazada<T>}}
 	\var{tamaño}{\Int}
 
@@ -353,11 +339,9 @@ Implemente el TAD Conjunto$<$T$>$ (definido en el apunte de TADs) usando la sigu
 	\begin{proc}{conjVacio}{}{\moduletype}
 		\compl{O(1)}
 		\begin{lstlisting}[numbers=none,frame=none]
-		var conj: ConjuntoLista < T >;
-		conj := new ConjuntoLista < T >;
-		conj.datos = new ListaEnlazada < T >;
-		conj.tamano = 0;
-		return conj;
+		res.datos = new ListaEnlazada < T >;
+		res.tamano = 0;
+		return res;
 		\end{lstlisting}
 	\end{proc}
 
