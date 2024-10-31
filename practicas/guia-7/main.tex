@@ -56,7 +56,7 @@ Implementamos un \textbf{Árbol Binario} (AB)
 
 	\begin{proc}{alturaAux}{\In r: \nodo}{\Int}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null:
+		if r == null then
 			return 0;
 		endif
 	
@@ -73,9 +73,9 @@ Implementamos un \textbf{Árbol Binario} (AB)
 
 	\begin{proc}{cantidadHojasAux}{\In r: \nodo}{\Int}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null
+		if r == null then
 			return 0;
-		else if r.izq == null && r.der == null
+		else if r.izq == null && r.der == null then
 			return 1;
 		endif
 
@@ -94,9 +94,9 @@ Implementamos un \textbf{Árbol Binario} (AB)
 
 	\begin{proc}{estaAux}{\In r: \nodo, \In e: T}{\bool}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null
+		if r == null then
 			return false;
-		else if r.dato == e
+		else if r.dato == e then
 			return true;
 		else
 			return estaAux(r.izq, e) || estaAux(r.der, e);
@@ -116,9 +116,9 @@ Implementamos un \textbf{Árbol Binario} (AB)
 		var cant: int;
 		cant := 0;
 
-		if r == null
+		if r == null then
 			return 0;
-		else if r.dato == e:
+		else if r.dato == e then
 			cant := 1;
 		endif
 		
@@ -158,6 +158,26 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 
 \begin{module}{ABB}{T}{Arbol Binario De Busqueda}{T}
 	\var{raiz}{\nodo}
+	\var{size}{\Int}
+
+	\pred{InvRep}{ab: \moduletype}{
+		esABB(ab.raiz) \land ab.size = cantNodos(ab.raiz)
+	}
+
+	\aux{cantNodos}{r: \nodo}{\Int}{
+		\If{r = null}{0}{1 + cantNodos(r.izq) + cantNodos(r.der)}
+	}
+
+	\begin{proc}{nuevoABB}{}{\moduletype}
+		\compl{O(1)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var ab: ABB < T >;
+		ab := new ABB < T >;
+		ab.raiz := new Nodo < T >;
+		ab.size := 0;
+		return ab;
+		\end{lstlisting}
+	\end{proc}
 
 	\begin{proc}{esta}{\In ab: \moduletype, \In t: T}{\bool}
 		Mejor caso: $\Theta(1)$\\
@@ -169,9 +189,9 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 
 	\begin{proc}{estaAux}{\In r: \nodo, \In t: T}{\bool}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r.dato == t
+		if r.dato == t then
 			return true;
-		else if t > r.dato
+		else if t > r.dato then
 			return estaAux(r.der, t);
 		else
 			return estaAux(r.izq, t);
@@ -189,11 +209,11 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 
 	\begin{proc}{cantidadAparicionesAux}{\In r: \nodo, \In t: T}{\Int}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null
+		if r == null then
 			return 0;
-		else if r.dato == t
+		else if r.dato == t then
 			return 1 + cantidadAparicionesAux(r.izq, t);
-		else if r.dato > t
+		else if r.dato > t then
 			return cantidadAparicionesAux(r.der, t);
 		else
 			return cantidadAparicionesAux(r.izq, t);
@@ -206,15 +226,18 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 		Peor caso: $\Theta(n)$
 		\begin{lstlisting}[numbers=none,frame=none]
 		ab.raiz := insertarAux(ab.raiz, t);
+		ab.size := ab.size + 1;
 		\end{lstlisting}
 	\end{proc}
 
+	\pagebreak
+
 	\begin{proc}{insertarAux}{\Inout r: \nodo, \In t: T}{\nodo}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null
+		if r == null then
 			r := new Nodo < T >;
 			r.dato := t;
-		else if t <= r.dato
+		else if t <= r.dato then
 			r.izq := insertarAux(r.izq, t);
 		else
 			r.der := insertarAux(r.der, t);
@@ -228,24 +251,27 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 		Mejor caso: $\Theta(1)$\\
 		Peor caso: $\Theta(n)$
 		\begin{lstlisting}[numbers=none,frame=none]
-		ab.raiz := eliminarAux(ab.raiz, t);
+		if ab.esta(t) then
+			ab.raiz := eliminarAux(ab.raiz, t);
+			ab.size := ab.size - 1;
+		endif
 		\end{lstlisting}
 	\end{proc}
 
 	\begin{proc}{eliminarAux}{\Inout r: \nodo, \In t: T}{\nodo}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null
+		if r == null then
 			return null
-		else if r.dato == t
-			if r.izq != null && r.der != null
+		else if r.dato == t then
+			if r.izq != null && r.der != null then
 				r.dato = minimo(r.der);
 				r.der = eliminarAux(r.der,r.dato);
-			else if r.izq != null
+			else if r.izq != null then
 				return r.izq;
 			else
 				return r.der;
 			endif
-		else if t > r.dato
+		else if t > r.dato then
 			r.der := eliminarAux(r.der, t);
 		else
 			r.izq := eliminarAux(r.izq, t);
@@ -274,13 +300,13 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 
 		inOrderAux(cola, ab.raiz);
 
-		return colaAArray(cola, cantidadNodos(ab.raiz));
+		return colaAArray(cola, ab.size);
 		\end{lstlisting}
 	\end{proc}
 
 	\begin{proc}{inOrderAux}{\Inout c: ColaSobreLista$<$T$>$,\In r: \nodo}{}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null
+		if r == null then
 			return;
 		endif
 
@@ -289,8 +315,6 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 		inOrderAux(c, r.der);
 		\end{lstlisting}
 	\end{proc}
-
-	\pagebreak
 
 	\begin{proc}{colaAArray}{\Inout c: ColaSobreLista$<$T$>$, \In size: \Int}{\Array{T}}
 		\begin{lstlisting}[numbers=none,frame=none]
@@ -308,13 +332,9 @@ Un \textbf{Árbol Binario de Búsqueda} (ABB) es un árbol binario que cumple qu
 		\end{lstlisting}
 	\end{proc}
 
-	\begin{proc}{cantidadNodos}{\In r: \nodo}{\Int}
+	\begin{proc}{cantidadNodos}{\In ab: \moduletype}{\Int}
 		\begin{lstlisting}[numbers=none,frame=none]
-		if r == null
-			return 0;
-		else
-			return 1 + cantidadNodos(r.der) + cantidadNodos(r.izq);
-		endif
+		return ab.size;
 		\end{lstlisting}
 	\end{proc}
 \end{module}
@@ -323,4 +343,124 @@ Si el arbol está balanceado entonces la complejidad en el peor caso de los algo
 \medskip
 
 Si se insertar valores repetidos, según el enunciado, estos se insertaran en el subarbol izquierdo del nodo con ese mismo valor (no se cual sería el problema)
+
+\subsection{Ejercicio 3}
+Implementar los siguientes TADs sobre ABB. Calcule las complejidades de los procs en mejor y peor caso
+\begin{enumerate}
+	\item Conjunto$<$T$>$
+	\item Diccionario$<$K, V$>$
+	\item ColaDePrioridad$<$T$>$
+\end{enumerate}
+
+Recalcule, si es necesario, las complejidades en peor caso de los algoritmos de los TADs considerando que se implementan sobre AVL en vez de ABB.
+
+\begin{module}{ConjuntoABB}{T}{Conjunto}{T}
+	var elems: ABB$<$T$>$
+
+	\begin{proc}{conjVacio}{}{\moduletype}
+		\compl{O(1)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var conj: ConjuntoABB < T >;
+		conj := new ConjuntoABB < T >;
+		conj.elems := nuevoABB();
+		return conj;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{pertenece}{\In c: \moduletype, \In e: T}{\bool}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		return c.elems.esta(e);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{agregar}{\Inout c: \moduletype, \In e: T}{}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		if !c.elems.pertenece(e) then
+			c.elems.insertar(e);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{sacar}{\Inout c: \moduletype, \In e: T}{}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		c.elems.eliminar(e);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{unir}{\Inout c1: \moduletype, \In c2: \moduletype}{}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(nm)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		var elems: Array < T >;
+		var i: int;
+		elems := c2.elems.inOrder();
+		i := 0;
+
+		while i < elems.length() do
+			c1.elems.agregar(elems[i]);
+			i := i + 1;
+		endwhile
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{restar}{\Inout c1: \moduletype, \In c2: \moduletype}{}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(nm)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		var elems: Array < T >;
+		var i: int;
+		elems := c2.elems.inOrder();
+		i := 0;
+
+		while i < elems.length() do
+			c1.elems.eliminar(elems[i]);
+			i := i + 1;
+		endwhile
+		\end{lstlisting}
+	\end{proc}
+
+	\pagebreak
+
+	\begin{proc}{intersecar}{\Inout c1: \moduletype, \In c2: \moduletype}{}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n^2 + nm)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		var elems: Array < T >;
+		var i: int;
+		elems := c1.elems.inOrder();
+		i := 0;
+
+		while i < elems.length() do
+			if !c2.elems.pertenece(elems[i]) then
+				c1.elems.eliminar(elems[i]);
+			endif
+			i := i + 1;
+		endwhile
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{agregarRapido}{\Inout c: \moduletype, \In e: T}{}
+		Mejor caso: $\Theta(1)$\\
+		Peor caso: $\Theta(n)$
+		\begin{lstlisting}[numbers=none,frame=none]
+		c.elems.insertar(e);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{tamano}{\In c: \moduletype}{\Int}
+		\compl{\Theta(1)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return c.elems.cantidadNodos();
+		\end{lstlisting}
+	\end{proc}
+\end{module}
+
+El diccionario sobre ABB tiene basicamente los mismos procs que el conjunto solo que en vez de usar ABB$<$T$>$ usamos ABB$<$\struct{clave: K, valor: V}$>$ con K un tipo comparable.
+
 \end{document}
