@@ -327,8 +327,12 @@ Implemente el TAD Conjunto$<$T$>$ (definido en el apunte de TADs) usando la sigu
 	\var{datos}{\mathsf{ListaEnlazada<T>}}
 	\var{tamaño}{\Int}
 
+	\pred{sinRepetidos}{s: \TLista{T}}{
+		\paraTodo{i,j}{\ent}{0 \leq i < j < s.length \thenLuego s[i] \neq s[j]}
+	}
+
 	\pred{InvRep}{c: \moduletype}{
-		c.tama\tilde{n}o = c.datos.longitud() \land sinRepetidos()?
+		c.tama\tilde{n}o = c.datos.s.length \land sinRepetidos(c.datos.s)
 	}
 
 	\pred{predAbs}{c1: \moduletype, c2: \tadtype}{
