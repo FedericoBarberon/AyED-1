@@ -4,7 +4,7 @@ Guías prácticas y talleres de programación de la materia Algoritmos y Estruct
 
 ### ADVERTENCIA
 
-La correctitud de los ejercicios de las guías prácticas **NO ESTÁ GARANTIZADA**. Puede tener errores, _i'm human_.
+Las guías práctias pueden estar incompletas y la correctitud de los ejercicios **NO ESTÁ GARANTIZADA**. Puede tener errores, _i'm human_.
 
 | Prácticas                                              |
 | ------------------------------------------------------ |
