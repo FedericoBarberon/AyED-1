@@ -1,0 +1,408 @@
+\input{../macros/macros.tex}
+\input{../macros/AEDmacros.tex}
+
+\begin{document}
+
+\titulo{Guia 8}
+\input{../caratuladc/caratula.tex}
+%Carátula
+\maketitle
+\newpage
+
+%Indice
+\tableofcontents
+\newpage
+
+\section{Guia 8}
+
+\subsection{Ejercicio 1}
+Tenemos un TAD que modela las ventas minoristas de un comercio. Cada venta es individual (una unidad de un producto) y se quieren registrar todas las ventas. El TAD tiene un único observador:
+\medskip
+\\
+Producto es \str\\
+Monto es \ent\\
+Fecha es \ent (segundos desde 1/1/1970)
+\bigskip
+
+\begin{tad}{Comercio}{}
+	\obs{ventasPorProducto}{\dict{Producto, \TLista{\tupla{Fecha, Monto}}}}
+\end{tad}
+
+\textbf{ventasPorProducto} contiene, para cada producto, una secuencia con todas las ventas que se hicieron de ese producto. Para cada venta, se registra la fecha y el precio. Se puede considerar que todas las fechas son diferentes. Este TAD lo vamos a implementar con la siguiente estructura:
+\bigskip
+
+\begin{module}{ComercioImpl}{}{Comercio}{}
+	\var{ventas}{SecuenciaImpl\lrangle{tupla\lrangle{Producto, Fecha, Monto}}}
+	\var{totalPorProducto}{DiccionarioImpl\lrangle{Producto, Monto}}
+	\var{ultimoPrecio}{DiccionarioImpl\lrangle{Producto, Monto}}
+\end{module}
+
+\begin{itemize}
+	\item \textbf{ventas} es una implementación de secuencia con todas las ventas realizadas, indicando producto, fecha y monto.
+	\item \textbf{totalPorProducto} asocia cada producto con el dinero total obtenido por todas sus ventas.
+	\item \textbf{ultimoPrecio} asocia cada producto con el monto de su última venta registrada.
+\end{itemize}
+
+Se pide:
+
+\begin{itemize}
+	\item Escribir en forma coloquial y detallada el invrep y la func abs.
+	\item Escribir ambos en el lenguaje de especificación.
+\end{itemize}
+
+InvRep:
+\begin{itemize}
+	\item Las claves de totalPorProducto son iguales a las claves de ultimoPrecio.
+	\item Una clave está en totalPorProducto si y solo si está como primer componente de algún elemento de ventas.
+	\item La segunda componente de todos los elementos de ventas son distintas.
+	\item La tercera componente de todos los elementos de ventas son positivas.
+	\item El valor de todas las claves de totalPorProducto es igual a la suma de la tercer componente de todos los elementos de ventas que tengan como primer componente esa misma clave.
+	\item El valor de todas las claves de ultimoPrecio es igual a la tercer componente del elemento de ventas que su primer componente es esa misma clave y la segunda componente es el mayor de todos los elementos de ventas con esa misma clave.
+\end{itemize}
+
+FuncAbs:
+\begin{itemize}
+	\item Una clave pertenece a ventasPorProducto si y solo si pertenece a totalPorProducto
+	\item El valor de una clave c perteneciente a ventasPorProducto es una secuencia de tuplas con la segunda y tercer componente de todos los elementos de ventas que tienen como primer componenete a c
+\end{itemize}
+\pagebreak
+
+\pred{clavesIguales}{d1: \dict{Producto, Monto}, d2: \dict{Producto, Monto}}{
+	\paraTodo{c}{Producto}{c \in d1 \iff c \in d2}
+}
+
+\pred{todosFechasDistintas}{v: \TLista{\tupla{Producto, Fecha, Monto}}}{
+	\paraTodo{i,j}{\ent}{
+		0 \leq i < j < v.length \thenLuego v[i].fecha \neq v[j].fecha
+	}
+}
+
+\pred{todosMontosPositivos}{v: \TLista{\tupla{Producto, Fecha, Monto}}}{
+	\paraTodo{i}{\ent}{
+		0 \leq i < v.length \thenLuego v[i].monto \geq 0
+	}
+}
+
+\pred{esVentaMasRecienteDeProd}{ventas: \TLista{\tupla{Producto, Fecha, Monto}}, v: \tupla{Producto, Fecha, Monto}}{
+	v \in ventas \land \paraTodo{v2}{\tupla{Producto, Fecha, Monto}}{
+		v1 \in ventas \Then v1.fecha \leq v.fecha
+	}
+}
+
+\aux{sumaMontosDeProducto}{v: \TLista{\tupla{Producto, Fecha, Monto}}, p: Producto}{\ent}{\\
+	\Indent\displaystyle\sum_{i=0}^{v.length - 1} \If{v[i].producto = p}{v[i].monto}{0}
+}
+\bigskip
+
+\pred{InvRep}{c: ComercioImpl}{
+	clavesIguales(c.totalPorProducto.data, c.ultimoPrecio.data) \land \\
+	\paraTodo[multLineas]{p}{Producto}{p \in c.totalPorProducto.data \iff \existe[multLineas]{v}{\tupla{Producto, Fecha, Monto}}{v \in c.ventas.s \land v.producto = p}} \land \\
+	todosFechasDistintas(c.ventas.s) \land todosMontosPositivos(c.ventas.s) \land \\
+	\paraTodo[multLineas]{p}{Producto}{p \in c.totalPorProducto.data \Then c.totalPorProducto.data[p] = sumaMontosDeProducto(c.ventas.s, p)} \land \\
+	\paraTodo{p}{Producto}{p \in c.ultimoPrecio.data \Then \existe[multLineas]{v}{\tupla{Producto, Fecha, Monto}}{v \in c.ventas.s \land v.producto = p \land v.monto = c.ultimoPrecio.data[p] \land \\
+			esVentaMasRecienteDeProd(c.ventas.data, v)}}
+}
+
+\aux{ventasDeProd}{v: \TLista{\tupla{Producto, Fecha, Monto}}, p: Producto, \\
+	\Indent\Indent\Indent\Indent\Indent list: \TLista{\tupla{Fecha, Monto}}}{\TLista{\tupla{Fecha, Monto}}}{\\
+	\Indent\If{v.length == 0}{list}{\\
+		\Indent\Indent\If{v[0].producto = p}{\\
+			\Indent\Indent\Indent ventasPorProd(tail(v), p, list \masmas \lrangle{v[0].fecha, v[0].monto})}{\\
+			\Indent\Indent\Indent ventasPorProducto(tail(v), p, list)}
+	}
+}
+\bigskip
+
+\pred{predAbs}{c1: ComercioImpl, c2: Comercio}{
+	clavesIguales(c1.totalPorProducto.data, c2.ventasPorProducto) \land \\
+	\paraTodo[multLineas]{p}{Producto}{p \in c2.ventasPorProducto \Then c2.ventasPorProducto[p] = ventasPorProd(c1.ventas.s, p, [])}
+}
+\pagebreak
+
+\subsection{Ejercicio 2}
+Considere la siguiente especificación de una relación uno/muchos entre alarmas y sensores de una planta industrial: un sensor puede estar asociado a muchas alarmas, y una alarma puede tener muchos sensores asociados.
+\bigskip
+
+\begin{tad}{Planta}{}
+	\obs{alarmas}{\conj{alarma}}
+	\obs{sensores}{\conj{\lrangle{Sensor, Alarma}}}
+
+	\begin{proc}{nuevaPlanta}{}{\tadtype}
+		\asegura{res.alarmas = \{\}}
+		\asegura{res.sensores = \{\}}
+	\end{proc}
+
+	\begin{proc}{agregarAlarma}{\Inout p: \tadtype, \In a: Alarma}{}
+		\requiere{p = P_0}
+		\requiere{a \notin p.alarmas}
+		\asegura{p.alarmas = P_0.alarmas \cup \{a\}}
+		\asegura{p.sensores = P_0.sensores}
+	\end{proc}
+
+	\begin{proc}{agregarSensor}{\Inout p: \tadtype, \In a: Alarma, \In s: Sensor}{}
+		\requiere{p = P_0}
+		\requiere{a \in p.alarmas}
+		\requiere{\lrangle{s, a} \notin p.sensores}
+		\asegura{p.alarmas = P_0.alarmas}
+		\asegura{p.sensores = P_0.sensores \cup \{\lrangle{s, a}\}}
+	\end{proc}
+\end{tad}
+
+Se decidió utilizar la siguiente estructura como representación, que permite consultar fácilmente tanto en una dirección (sensores de una alarma) como en la contraria (alarmas de un sensor)
+\bigskip
+
+\begin{module}{PlantaImpl}{}{Planta}{}
+	\var{alarmas}{Diccionario\lrangle{Alarma, Conjunto\lrangle{Sensor}}}
+	\var{sensores}{Diccionario\lrangle{Sensor, Conjunto\lrangle{Alarma}}}
+\end{module}
+
+Se pide:
+\begin{itemize}
+	\item Escribir formalmente y en castellano el invrep.
+	\item Escribir la func Abs.
+\end{itemize}
+
+InvRep:
+
+Opción 1:
+\begin{itemize}
+	\item Todos los elementos de los valores de todas las claves de $alarmas$ son claves de $sensores$
+	\item Todos los elementos de los valores de todas las claves de $sensores$ son claves de $alarmas$
+\end{itemize}
+Opción 2:
+\begin{itemize}
+	\item Para toda clave $k$ en $alarmas$, todo elemento $e$ en $alarmas[k]$ es clave de $sensores$
+	\item Para toda clave $k$ en $sensores$, todo elemento $e$ en $sensores[k]$ es clave de $alarmas$
+\end{itemize}
+
+Func Abs:
+
+Sea $p1: PlantaImpl, p2: Planta$
+\begin{itemize}
+	\item Una alarma $a$ es una clave de $p1.alarmas$ si y solo si $a$ pertenece a $p2.alarmas$
+	\item Un par de sensor y alarma \lrangle{s, a} pertenece a $p2.sensores$ si y solo si $s$ pertenece a $p1.sensores$ y $a$ pertenece a $p1.sensores[s]$
+\end{itemize}
+
+\subsection{Ejercicio 3}
+\hacer
+
+\subsection{Ejercicio 4}
+Se desea diseñar un sistema para registrar las notas de los alumnos en una facultad. Al igual que en Exactas, los alumnos se identifican con un número de LU. A su vez, las materias tienen un nombre, y puede haber una cantidad no acotada de materias. En cada materia, las notas están entre 0 y 10, y se aprueban si la nota es mayor o igual a 7.
+\bigskip
+
+\begin{tad}{Sistema}{}
+	\obs{notas}{\dict{materia, \dict{alumno, \ent}}}
+
+	\begin{proc}{nuevoSistema}{}{\tadtype}
+	\end{proc}
+	\begin{proc}{registrarMateria}{\Inout s: \tadtype, \In m: materia}{}
+	\end{proc}
+	\begin{proc}{registrarNota}{\Inout s: \tadtype, \In m: materia, \In a: alumno, \In n: nota}{}
+	\end{proc}
+	\begin{proc}{notaDeAlumno}{\In s: \tadtype, \In a: alumno, \In m: materia}{nota}
+	\end{proc}
+	\begin{proc}{cantAlumnosConNota}{\In s: \tadtype, \In m: materia, \In n: nota}{\ent}
+	\end{proc}
+	\begin{proc}{cantAlumnosAprobados}{\In s: \tadtype, \In m: materia}{\ent}
+	\end{proc}
+\end{tad}
+
+Dados $m = cantMaterias$ y $n = cantAlumnos$ se desea diseñar un módulo con los siguientes requerimientos de complejidad temporal:
+\begin{itemize}
+	\item nuevoSistema $O(1)$
+	\item registrarMateria $O(\log m)$
+	\item registrarNota $O(\log n + \log m)$
+	\item notaDeAlumno $O(\log n + \log m)$
+	\item cantAlumnosConNota y cantAlumnosAprobados $O(\log m)$
+\end{itemize}
+
+Materia es \str
+
+Alumno es \str
+
+Nota es \Int
+
+\begin{module}{SistemaImpl}{}{Sistema}{}
+	\var{notas}{DiccionarioLog\lrangle{Materia, DiccionarioLog\lrangle{Alumno, Nota}}}
+	\var{cantAlumnosPorNota}{DiccionarioLog\lrangle{Materia, Array\lrangle{int}}}
+	\bigskip
+
+	\pred{esNota}{n: \ent}{0 \leq n \leq 10}
+
+	\pred{InvRep}{s: \moduletype}{
+		\paraTodo{m}{Materia}{m \in s.notas.data \iff m \in s.notas.cantAlumnosPorNota.data} \land \\
+		\paraTodo{m}{Materia}{m \in s.notas.data \Then esNota(s.notas.data[m])} \land \\
+		\paraTodo[multLineas]{m}{Materia}{m \in s.cantAlumnosPorNota.data \Then s.cantAlumnosPorNota.data[m].length = 11 \land \\
+			\paraTodo{n}{\ent}{esNota(n) \thenLuego (?)}}
+	}
+
+	\pred{predAbs}{s1: \moduletype, s2: \tadtype}{
+		\hacer
+	}
+
+	\begin{proc}{nuevoSistema}{}{\moduletype}
+		\compl{O(1)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		res.notas := diccionarioVacio();
+		res.cantAlumnosPorNota := diccionarioVacio();
+
+		return res;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{registrarMateria}{\Inout s: \moduletype, \In m: Materia}{}
+		\compl{O(\log m)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var alumnos: DiccionarioLog < Alumno, Nota >;
+		var notas: Array < int >;
+		var i := 0;
+
+		alumnos := diccionarioVacio();
+		notas := new Array < int > (11);
+
+		while i < 11 do
+			notas[i] := 0;
+			i := i + 1;
+		endwhile
+
+		s.notas.definir(m, alumnos);
+		s.cantAlumnosPorNota.definir(m, notas);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{registrarNota}{\Inout s: \moduletype, \In m: Materia, \In a: Alumno, \In n: Nota}{}
+		\compl{O(\log n + \log m)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var notasDeMateria: DiccionarioLog < Materia, Array < int >>;
+
+		s.notas.obtener(m).definir(a, n);
+		
+		notasDeMateria := s.cantAlumnosPorNota.obtener(m);
+		notasDeMateria[n] := notasDeMateria[n] + 1;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{notaDeAlumno}{\In s: \moduletype, \In a: Alumno, \In m: Materia}{Nota}
+		\compl{O(\log n + \log m)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return s.notas.obtener(m).obtener(a);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantAlumnosConNota}{\In s: \moduletype, \In m: Materia, \In n: Nota}{\Int}
+		\compl{O(\log m)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return s.cantAlumnosPorNota.obtener(m)[n];
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantAlumnosAprobados}{\In s: \moduletype, \In m: Materia}{\Int}
+		\compl{O(\log m)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var cant: int;
+		var nota: int;
+		var notasDeMateria: DiccionarioLog < Materia, Array < int >>;
+		cant := 0;
+		nota := 7;
+		notasDeMateria := s.cantAlumnosPorNota.obtener(m);
+
+		while nota < 11 do
+			cant := cant + notasDeMateria[nota];
+			nota := nota + 1;
+		endwhile
+
+		return cant;
+		\end{lstlisting}
+	\end{proc}
+\end{module}
+
+\subsection{Ejercicio 5}
+El TAD Matriz infinita de booleanos tiene las siguientes operaciones:
+\begin{itemize}
+	\item Crear, que crea una matriz donde todos los valores son falsos.
+	\item Asignar, que toma una matriz, dos naturales (fila y columna) y un booleano, y asigna a este último en esa coordenada. (Como la matriz es infinita, no hay restricciones sobore la magnitud de fila y columna).
+	\item Ver, que dadas una matriz, una fila y una columna devuelve el valor de esa coordenada. (Idem.)
+	\item Complementar, que invierte todos los valores de la matriz.
+\end{itemize}
+\bigskip
+
+\begin{minipage}[t]{0.45\textwidth}
+	Ejemplo de uso del módulo:
+	\begin{lstlisting}[numbers=none,frame=none]
+MatrizInfinita M := Crear()
+bool b1 := Ver(M , 0, 0)
+Asignar(M , 1, 3, False)
+Asignar(M , 100, 5000, True)
+bool b2 := M .Ver(100, 5000)
+Complementar( M )
+bool b3 := Ver(M , 394, 788)
+bool b4 := Ver(M , 100, 5000)
+	\end{lstlisting}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
+	Tras lo ue deberíamos tener
+	\begin{lstlisting}[numbers=none,frame=none]
+b1 = False
+b2 = True
+b3 = True
+b4 = False
+	\end{lstlisting}
+\end{minipage}
+
+Elija la estructura y escriba los algoritmos de modod que las operaciones Crear, Ver y Complementar tomen $O(1)$ tiempo en peor caso.
+
+\begin{module}{MatrizInfinita}{}{MatrizInfinitaBooleanos}{}
+	\var{matriz}{Vector\lrangle{Vector\lrangle{bool}}}
+	\var{complementar}{bool}
+
+	\begin{proc}{Crear}{}{\moduletype}
+		\begin{lstlisting}[numbers=none,frame=none]
+		res.matriz := vectorVacio();
+		res.complementar := false;
+		return res;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{Asignar}{\Inout m: \moduletype, \In f: \Int, \In c: \Int, \In b: \bool}{}
+		\hacer
+	\end{proc}
+
+	\begin{proc}{Ver}{\In m: \moduletype, \In f: \Int, \In c: \Int}{\bool}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if m.matriz.longitud() == 0 || f >= m.matriz.longitud() || c >= m.matriz[0].longitud() then
+			return m.complementar;
+		else if m.complementar then
+			return !m.matriz[f][c];
+		else
+			return m.matriz[f][c];
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{Complementar}{\Inout m: \moduletype}{}
+		\begin{lstlisting}[numbers=none,frame=none]
+		m.complementar := !m.complementar;
+		\end{lstlisting}
+	\end{proc}
+\end{module}
+
+\subsection{Ejercicio 6}
+Una matriz finita posee las siguientes operaciones:
+\begin{itemize}
+	\item Crear, con la cnatidad de filas y columnas que albergará la matriz.
+	\item Definir, que permite definir el valor para una posición válida.
+	\item \#Filas, que retorna la cantidad de filas de la matriz.
+	\item \#Columnas, que retorna la cantidad de columas de la matriz.
+	\item Obtener, que devuelve el valor de una posición válida de la matriz (si nunca se definió la matriz en la posición solicitada devuelve cero).
+	\item SumarMatrices, que permite sumar dos matrices de iguales dimensiones.
+\end{itemize}
+
+Dado $n$ y $m$ son la cantidad de elementos no nulos de $A$ y $B$, respectivamente, diseñe un módulo (elegir una estructura y escribir los algoritmos) para el TAD MatrizFinita de modo tal que dados dos matrices finitas $A$ y $B$,
+\begin{enumerate}[label=(\alph*)]
+	\item Definir y Obtener aplicadas a $A$ se realicen cada una en $\Theta(n)$ en peor caso, y
+	\item SumarMatrices aplicada a $A$ y $B$ se realice en $\Theta(n + m)$ en peor caso.
+\end{enumerate}
+
+\hacer
+
+\end{document}

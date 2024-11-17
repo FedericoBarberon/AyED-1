@@ -459,4 +459,330 @@ Recalcule, si es necesario, las complejidades en peor caso de los algoritmos de 
 
 El diccionario sobre ABB tiene basicamente los mismos procs que el conjunto solo que en vez de usar ABB$<$T$>$ usamos ABB$<$\struct{clave: K, valor: V}$>$ con K un tipo comparable.
 
+\subsection{Ejercicio 4}
+\hacer
+
+\subsection{Ejercicio 5}
+Escriba un algoritmo que verifique si un árbol binario cumple con la propiedad de max-heap
+
+\begin{proc}{esMaxHeap}{\In ab: ArbolBinario}{\bool}
+	\begin{lstlisting}[numbers=none,frame=none]
+	return esMaxHeapAux(ab.raiz)
+	\end{lstlisting}
+\end{proc}
+
+\begin{proc}{esMaxHeapAux}{\In r: \nodo}{\bool}
+	\begin{lstlisting}[numbers=none,frame=none]
+	var esMayorQueHijos: bool
+
+	if r == null then
+		return true;
+	endif
+
+	esMayorQueHijos := (r.izq == null || r.dato >= r.izq.dato) &&
+					   (r.der == null || r.dato >= r.der.dato);
+
+	return esMayorQueHijos && esMaxHeapAux(r.izq) && esMaxHeapAux(r.der)
+	\end{lstlisting}
+\end{proc}
+
+\subsection{Ejericio 6}
+Implemente el TAD ColaDePrioridad$<$T$>$ utilizando heaps (implementados con arreglos).
+\begin{enumerate}
+	\item Escriba en castellano y en lógica el inverp
+	\item Escriba los algoritmos para las operaciones encolar, desencolarMax y cambiarPrioridad. Justifique la complejidad de cada operación.
+\end{enumerate}
+
+\begin{module}{ColaDePrioridadHeap}{T}{ColaDePrioridad}{T}
+	\var{elems}{Vector<\struct{dato: T, pri: \float}>}
+
+	InvRep: Para todo $i$ en rango de $elems$
+	\begin{itemize}
+		\item Si $2i + 1$ está en rango de $elems$ entonces $elems[i].pri \geq elems[2i + 1].pri$
+		\item Si $2i + 2$ está en rango de $elems$ entonces $elems[i].pri \geq elems[2i + 2].pri$
+	\end{itemize}
+
+	\pred{InvRep}{c: \moduletype}{
+		\paraTodo{i}{\Int}{
+			0 \leq i < c.elems.s.length \thenLuego \\
+			\Indent (2i + 1 < c.elems.s.length \thenLuego c.elems[i].pri \geq c.elems[2i + 1].pri) \land \\
+			\Indent (2i + 2 < c.elems.s.length \thenLuego c.elems[i].pri \geq c.elems[2i + 2].pri)
+		}
+	}
+
+	\begin{proc}{swap}{\Inout v: Vector$<$\struct{dato: T, pri: \float}$>$, \In i1: int, \In i2: int}{}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var aux: Struct< dato: T, pri: float >;
+		aux := v[i1];
+		v[i1] := v[i2];
+		v[i2] := aux;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{siftDown}{\Inout v: Vector$<$\struct{dato: T, pri: \float}$>$, \In i: \Int}{}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var tieneHijoIzq: bool;
+		var tieneHijoIzq: bool;
+		tieneHijoIzq := 2*i + 1 < v.longitud();
+		tieneHijoDer := 2*i + 2 < v.longitud();
+
+		if tieneHijoIzq && tieneHijoDer && (v[i].pri < v[2*i + 1].pri || v[i].pri < v[2*i + 2].pri) then
+
+			if v[2*i + 1].pri > v[2*i + 2].pri then
+				swap(v, i, 2*i + 1);
+				siftDown(v, 2*i + 1);
+			else
+				swap(v, i, 2*i + 2);
+				siftDown(v, 2*i + 2);
+			endif
+		else if tieneHijoIzq && v[i].pri < v[2*i + 1].pri then
+			swap(v, i, 2*i + 1);
+			siftDown(v, 2*1 + 1);
+		else if tieneHijoDer && v[i].pri < v[2*i + 2].pri then
+			swap(v, i, 2*i + 2);
+			siftDown(v, 2*i + 2);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\pagebreak
+
+	\begin{proc}{siftUp}{\Inout v: Vector$<$\struct{dato: T, pri: \float}$>$, \In i: \Int}{}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var indPadre: int;
+		indPadre := (i - 1) / 2;
+		if i != 0 && v[i].pri > v[indPadre].pri then
+			swap(v, i indPadre);
+			siftUp(v, indPadre);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{encolar}{\Inout c: \moduletype, \In e: T, \In pri: \float}{}
+		\compl{O(\log n)}
+
+		En realidad si el elemento se inserta en un nuevo nivel entonces el vector se redimensionaria, por lo que sería $O(n)$.
+		\begin{lstlisting}[numbers=none,frame=none]
+		c.elems.agregarAtras(new Struct(dato: e, pri: pri));
+		siftUp(c.elems, c.elems.longitud() - 1);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{desencolarMax}{\Inout c: \moduletype}{T}
+		\compl{O(\log n)}
+
+		Eliminar un elemento del vector es $O(n)$ porque hay que mover todas las demás posiciones, sin embargo eliminar el último elemento de un vector sería $O(1)$ (?)
+		\begin{lstlisting}[numbers=none,frame=none]
+		var res: T;
+		res := c.elems[0].dato;
+		c.elems[0] := c.elems[c.elems.longitud() - 1];
+		c.elems.eliminar(c.elems.longitud() - 1);
+		siftDown(c.elems, 0);
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cambiarPrioridad}{\Inout c: \moduletype, \In e: T, \In pri: \float}{}
+		\compl{O(n)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var i: int;
+		i := 0;
+
+		while i < c.elems.longitud() && c.elems[i].dato != e do
+			i := i + 1;
+		endwhile
+
+		if i < c.elems.longitud() then
+			c.elems[i].pri := pri;
+			siftUp(c.elems, i);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+\end{module}
+
+\subsection{Ejercicio 7}
+¿Cómo haría para implementar una ColaDePrioridad ordenada por dos criterios? Por ejemplo, se quiere tener una cola de personas donde el criterio de ordenamiento es por edad y, en caso de empate, por apellido? Describa todos los cambios necesarios a la implementación del ejercicio anterior.
+\medskip
+\hacer
+
+\pagebreak
+
+\subsection{Ejercicio 8}
+
+Suponiendo que el metodo Array2MinHeap se encuentra dentro del modulo
+\begin{proc}{Array2MinHeap}{\In arr: Array$<$T$>$}{MinHeap$<$T$>$}
+	\begin{lstlisting}[numbers=none,frame=none]
+	var i: int;
+	i := 0;
+
+	res.elems := arr.copy();
+	
+	while i < (arr.length() + 1) / 2 do
+		siftDown(res.elems, i);
+		i := i + 1;
+	endwhile
+
+	return res;
+	\end{lstlisting}
+\end{proc}
+
+\begin{proc}{sortArr}{\Inout arr: Array$<$T$>$}{}
+	\begin{lstlisting}[numbers=none,frame=none]
+	var h: MinHeap< T >;
+	var i: int;
+
+	h := Array2MinHeap(arr);
+	i := 0;
+
+	while i < arr.length() do
+		arr[i] := h.desencolarMin();
+		i := i + 1;
+	endwhile
+	\end{lstlisting}
+\end{proc}
+
+\subsection{Ejercicio 9}
+\hacer
+
+\subsection{Ejercicio 10}
+Implemente un Trie utilizando arreglos y listas enlazadas para los nodos.
+\begin{itemize}
+	\item Describa en castellano el invrep
+	\item Escriba los algoritmos para las operaciones buscar y agregar y justifique la complejidad de cada operación.
+	\item ¿Qué diferencias observa entre ambas implementaciones? ¿Qué ventajas y desventajas tiene cada una? En qué casos utilizaría cada una?
+\end{itemize}
+
+Para la implementación del Trie me parecio adecuado hacer una implementación mas tipo diccionario ya que es facilmente adaptable a una implementaciónde conjunto, lo cual no es así al revés.
+
+T es un tipo iterable de E
+
+\newcommand{\nodoTrie}{\text{Nodo$<$E, K$>$}}
+
+\nodoTrie es Struct$<$ \\
+\Indent\Indent alfabeto: Array$<$\nodoTrie$>$,\\
+\Indent\Indent valor: K\\
+\Indent$>$
+\pagebreak
+\begin{module}{TrieArr}{T, K}{Trie}{T}
+	\var{raiz}{\nodoTrie}
+	\var{sizeAlfabeto}{\Int}
+
+	\medskip
+	InvRep
+	\begin{itemize}
+		\item Cada nodo tiene un único padre
+		\item La raíz no tiene padre
+		\item Las hojas tiene un valor definido
+		\item La raíz no tiene valor
+		\item Cada nodo tiene alfabeto definido
+		\item El tamaño de alfabeto de cada nodo es sizeAlfabeto
+	\end{itemize}
+
+	\begin{proc}{buscar}{\In t: \moduletype, \In e: T}{K}
+		\compl{O(|e|)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var actual: Nodo < E, K >;
+		var i: int;
+		actual := t.raiz;
+		i := 0;
+
+		while i < e.length() && actual.alfabeto[e[i]] != null do
+			actual := actual.alfabeto[e[i]];
+			i := i + 1;
+		endwhile
+
+		if i == e.length() && actual.valor != null then
+			return actual.valor;
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{agregar}{\Inout t: \moduletype, \In e: T, \In k: K}{}
+		\compl{O(|e|)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var actual: Nodo < E, K >;
+		var i: int;
+		actual := t.raiz;
+		i := 0;
+
+		while i < e.length() do
+			if actual.alfabeto[e[i]] == null then
+				var n: Nodo < E, K >;
+				n := new Nodo < E, K >;
+				n.alfabeto := new Array < E >(t.sizeAlfabeto);
+				actual.alfabeto[e[i]] := n;
+				actual := n;
+			else
+				actual := actual.alfabeto[e[i]];
+			endif
+
+			i := i + 1;
+		endwhile
+
+		actual.valor := k;
+		\end{lstlisting}
+	\end{proc}
+
+\end{module}
+
+\nodoTrie es Struct$<$\\
+\Indent\Indent hijo: \nodoTrie,\\
+\Indent\Indent hermano: \nodoTrie,\\
+\Indent\Indent valor: K,\\
+\Indent\Indent valorAlf: E\\
+\Indent$>$
+
+\begin{module}{TrieList}{T}{Trie}{T}
+	\var{raiz}{\nodoTrie}
+
+	\medskip
+	InvRep:
+	\begin{itemize}
+		\item Cada nodo tiene valorAlf definido
+		\item Cada nodo tiene un solo padre excepto la raíz
+		\item Si un nodo no tiene hijo entonces tiene un valor definido
+		\item Todos los valorAlf son distintos entre hermanos
+	\end{itemize}
+
+	\begin{proc}{buscar}{\In t: \moduletype, \In e: T}{K}
+		\compl{O(n)} $\leftarrow$ n cantidad de claves\\
+		En el peor de los casos todos las claves empiezan con una letra distinta y la palabra se encuentra en el último hermano
+		\begin{lstlisting}[numbers=none,frame=none]
+		var actual: Nodo < E, K >;
+		var i: int;
+		actual := t.raiz;
+		i := 0;
+
+		while i < e.length() && actual != null do
+			if actual.valorAlf != e[i] then
+				actual := actual.hermano;
+			else
+				if i != e.length() - 1 then
+					actual := actual.hijo;
+				endif
+				i := i + 1;
+			endif
+		endwhile
+
+		return actual.valor;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{agregar}{\Inout t: \moduletype, \In e: T, \In k: K}{}
+		\hacer
+
+		Creo que me conviene cambiar la representación para que la raíz sea un nodo que tengo como hijo una letra, y no que la raíz sea la primera letra
+	\end{proc}
+\end{module}
+
+\subsection{Ejercicio 11}
+Utilizando una estrucutra de Trie para almacenar palabras, escriba los algoritmos, justificando la complejidad de peor caso de cada uno:
+\begin{enumerate}
+	\item primeraPalabra: Devuelve la primera palabra en orden lexicográfico.
+	\item ultimaPalabra: Devuelve la última palabra en orden lexicográfico.
+	\item buscarIntervalo: Dadas dos palabras $p1$ y $p2$, devolver todas las palabras que se encuentren entre $p1$ y $p2$ en orden lexicográfico, ordenadas.
+\end{enumerate}
+\hacer
+
+
 \end{document}
