@@ -15,6 +15,7 @@ Las guías práctias pueden estar incompletas y la correctitud de los ejercicios
 | [**Práctica 4**](/practicas/guia-4/main.pdf)           |
 | [**Práctica 6**](/practicas/guia-6/main.pdf)           |
 | [**Práctica 7**](/practicas/guia-7/main.pdf)           |
+| [**Práctica 8**](/practicas/guia-8/main.pdf)           |
 
 | Talleres                          |
 | --------------------------------- |
