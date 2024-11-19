@@ -405,4 +405,280 @@ Dado $n$ y $m$ son la cantidad de elementos no nulos de $A$ y $B$, respectivamen
 
 \hacer
 
+\subsection{Ejercicio 8}
+Se desea diseñar un sistema de estadísticas para la cantidad de personas que ingresan a un banco. Al final del día, un empleado del banco ingresa en el sistema el total de ingresantes para ese día. Se desea saber, en cualquier intervalo de días, la cantidad total de personas que ingresaron al banco. La siguiente es una especificación del problema.
+
+\begin{tad}{IngresosAlBanco}{}
+	\obs{totales}{\TLista{\ent}}
+
+	\begin{proc}{nuevoIngresos}{}{\tadtype}
+		\asegura{res.totales = []}
+	\end{proc}
+
+	\begin{proc}{registrarNuevoDia}{\Inout i: \tadtype, \In cant: \ent}{}
+		\requiere{cant \geq 0 \land i = I_0}
+		\asegura{i.totales = I_0.totales.concat(cant)}
+	\end{proc}
+
+	\begin{proc}{cantDias}{\In i: \tadtype}{\ent}
+		\asegura{res = |i.totales|}
+	\end{proc}
+
+	\begin{proc}{cantPersonas}{\In i: \tadtype, \In desde: \ent, \In hasta: \ent}{\ent}
+		\requiere{0 \leq desde \leq hasta < |i.totales|}
+		\asegura{res = \sum_{j=desde}^{hasta} i.totales[j]}
+	\end{proc}
+\end{tad}
+
+\begin{enumerate}
+	\item Dar una estructura de representación que permita que la función \textit{cantPersonas} tome $O(1)$.
+	\item Calcular cómo crece el tamaño de la estructura en función de la cantidad de días que pasaron.
+	\item Si el cálculo del punto anterior fue una función que no es $O(n)$, piense otra estructura que permita resolver el problema utilizando $O(n)$ memoria.
+	\item Agregue al diseño del punto anterior una operación \textit{mediana} que devuelva el último (mayor) día $d$ tal que $cantPersonas(i, 0, d) \leq cantPersonas(i, d + 1, cantDias(i) - 1)$, restringiendo la operación a los casos donde dicho día existe.
+\end{enumerate}
+
+\begin{module}{IngresosAlBancoImpl}{}{IngresosAlBanco}{}
+	\var{totalesAcumulados}{Vector\lrangle{int}} \par
+	Crece proporcionalmente a la cantidad de días que pasaron
+
+	\begin{proc}{nuevoIngresos}{}{\moduletype}
+		\begin{lstlisting}[numbers=none,frame=none]
+		res.totales := new Vector < int > ();
+		return res;
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{registrarNuevoDia}{\Inout i: \moduletype, \In cant: \Int}{}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if i.cantDias() == 0 then
+			i.totalesAcumulados.add(cant);
+		else
+			i.totalesAcumulados.add(cant + i.totalesAcumulados[i.cantDias() - 1]);
+		endif
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantDias}{\In i: \moduletype}{\Int}
+		\begin{lstlisting}[numbers=none,frame=none]
+		return i.totalesAcumulados.size();
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{cantPersonas}{\In i: \moduletype, \In desde: \Int, \In hasta: \Int}{\Int}
+		\compl{O(1)}
+		\begin{lstlisting}[numbers=none,frame=none]
+		if desde == 0 then
+			return i[hasta];
+		endif
+
+		return i[hasta] - i[desde - 1];
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{mediana}{\In i: \moduletype}{\Int}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var mediana: int;
+		var j: int;
+		mediana := -1;
+		j := 0
+
+		while j < i.cantDias() do
+			if i.cantPersonas(0, j) <= i.cantPersonas(j + 1, i.cantDias() - 1) && j > mediana then
+				mediana := j;
+			endif
+
+			j := j + 1;
+		endwhile
+
+		return mediana;
+		\end{lstlisting}
+	\end{proc}
+\end{module}
+
+\subsection{Ejercicio 9}
+La Maderera San Blas vende, entre otras cosas, listones de madera. Los compra en aserraderos de la zona, los cepilla y acondiciona, y los vende por menor del largo que el cliente necesite.
+Tienen un sistema un poco particular y ciertamente no muy eficiente: Cuando ingresa un pedido, buscan el listón más largo que tiene en el depósito, realizan el corte del tamaño que el cliente pidió, y devuelven el trozo que queda al depósito.
+Por otra parte, identifican a cada cliente con un código alfanumérico de 10 dígitos y cuentan con un fichero en el que registran todas las compras que hizo cada cliente (con la fecha de la compra y el tamaño del listón vendido).
+Este sería el TAD simplificado del sistema:
+\pagebreak
+
+\texto{Cliente es string}
+\begin{tad}{Maderera}{}
+	\begin{proc}{comprarUnListon}{\Inout m: \tadtype, \In tamaño: \ent}{}
+		\textit{// comprar en el aserradero un listón de un determinado tamaño}
+	\end{proc}
+
+	\begin{proc}{venderUnListon}{\Inout m: \tadtype, \In tamaño: \ent, \In cli: Cliente, \In f: Fecha}{}
+		\textit{// vender un listón de un determinado tamaño a un cliente particular en una fecha determinada}
+	\end{proc}
+
+	\begin{proc}{ventasACliente}{\In m: \tadtype, \In cli: Cliente}{}
+		\textit{// devolver el conjunto de todas las ventas que se le hicieron a un cliente} \\
+		\textit{// (para cada venta, se quiere saber la fecha y el tamaño del listón)}
+	\end{proc}
+\end{tad}
+
+Se pide:
+
+\begin{itemize}
+	\item Escriba una estructura que permita realizar las operaciones indicadas con las siguientes complejidades:
+
+	      \begin{itemize}
+		      \item comprarUnListon en $O(\log(m))$
+		      \item venderUnListon en $O(\log(m))$
+		      \item ventasACliente en $O(1)$
+	      \end{itemize}
+
+	      donde m es la cantidad de pedazos de listón que hay en el depósito
+
+	\item Escriba el algoritmo para la operación venderUnListon
+\end{itemize}
+
+\begin{module}{MadereraImpl}{}{Maderera}{}
+	\var{listones}{ConjuntoLog\lrangle{\Int}}
+	\var{ventasPorCliente}{DiccDigital\lrangle{Cliente, ListaEnlazada\lrangle{\struct{tamaño: int, fecha: Fecha}}}} \textit{// Como las claves están acotadas a 10 dígitos, las operaciones son O(1)}
+
+	\begin{proc}{venderUnListon}{\Inout m: \moduletype, \In tamaño: \Int, \In cli: Cliente, \In f: Fecha}{}
+		\compl{O(\log(m))}
+		\begin{lstlisting}[numbers=none,frame=none]
+		var venta: Struct < tamano: int, fecha: Fecha >;
+		venta := new Struct < tamano: int, fecha: Fecha >;
+		venta.tamano := tamano;
+		venta.fecha := f;
+
+		m.listones.sacar(tamano); // O( log m )
+		
+		if m.ventasPorCliente.esta(cli) then // O(1)
+			m.ventasPorCliente.obtener(cli).agregarAtras(venta); // O(1)
+		else
+			var ventas: ListaEnlazada< Struct < tamano: int, fecha: Fecha > >;
+			ventas := new ListaEnlazada();
+			ventas.agregarAtras(venta); // O(1)
+			m.ventasPorCliente.definir(cli, ventas); // O(1)
+		endif
+		\end{lstlisting}
+	\end{proc}
+\end{module}
+
+\subsection{Ejercicio 10}
+Se quiere implementar el TAD Biblioteca que modela una biblioteca con su colección de libros. Se modela la biblioteca como una sola estantería de capacidad arbitraria, dentro de la cual cada libro ocupa una posición. La biblioteca cuenta con un registro de socios que pueden retirar y devolver libros en cualquier momento. Por restricciones del sistema que se utiliza, un socio no puede registrarse con un nombre de más de 50 caracteres.
+Cuando la biblioteca adquiere un nuevo libro o cuando un libro es devuelto, éste es insertado en el primer espacio libre de la estantería. Es decir, si los lugares ocupados son 1, 2, 3, 4 y se presta el libro en la posición 2, al agregar un nuevo libro al catálogo éste será ubicado en la posición 2. Cuando el libro que estaba originalmente en la posición 2 sea devuelto, será ubicado en la primera posición libre, que será la 5.
+El TAD tiene las siguientes operaciones, para las que se nos piden las complejidades temporales de peor caso indicadas, donde
+
+\begin{itemize}
+	\item $L$ es la cantidad de libros en la colección
+	\item $r$ es la cantidad de libros que el socio en cuestión tiene retirados
+	\item $k$ es la cantidad de posiciones libres en la estantería
+\end{itemize}
+
+Socio es \str; Libro, Posicion es \Int
+\begin{module}{Biblioteca}{}{}{}
+	\var{socios}{DiccionarioDigital\lrangle{Socio, ConjuntoLog\lrangle{Libro}}}
+	\textit{// Socios y los lirbos que tienen prestados} \par
+	\bigskip
+	\var{catalogo}{DiccionarioLog\lrangle{Libro, Posicion}}
+	\textit{// Libros y su posición en la estantería} \par
+	\bigskip
+	\var{posicionesLibres}{ColaDePrioridadLog\lrangle{Posicion}}
+	\textit{// Posiciones vacías en la estantería}
+	\textit{// Las posiciones mas chicas tienen mayor prioridad en la cola}
+	\bigskip
+
+	\begin{proc}{AgregarLibroAlCatálogo}{\Inout b: \moduletype, \In l: idLibro}{}
+		\begin{adjustwidth}{+5em}{}
+			\begin{itemize}
+				\item \textbf{Requiere}: $l$ no pertenece a la colección de libros de $b$
+				\item \textbf{Descripción}: la biblioteca adquiere un nuevo libro, lo suma a su catálogo y lo pone en la estantería en el primer espacio disponible
+				\item \textbf{Complejidad}: $O(\log(k) + \log(L))$
+			\end{itemize}
+		\end{adjustwidth}
+
+		\begin{lstlisting}[numbers=none,frame=none]
+		var pos: Posicion;
+
+		if b.posicionesLibres.size() == 0 then
+			pos := b.catalogo.size(); // O(1)
+		else
+			pos := b.posicionesLibres.desencolar(); // O(log(k))
+		endif // O(log(k))
+
+		b.catalogo.definir(l, pos); // O(log(L))
+		\end{lstlisting}
+		Complejidad final: $O(\log(k) + \log(L))$
+	\end{proc}
+
+	\begin{proc}{PedirLibro}{\Inout b: \moduletype, \In l: idLibro, \In s: Socio}{}
+		\begin{adjustwidth}{+5em}{}
+			\begin{itemize}
+				\item \textbf{Requiere}: $s$ es socio de la biblioteca y el libro $l$ no está entre los libros prestados
+				\item \textbf{Descripción}: el socio pasa a retirar un libro que se retira de la estantería y se acumula en sus libros prestados.
+				\item \textbf{Complejidad}: $O(\log(r) + \log(k) + \log(L))$
+			\end{itemize}
+		\end{adjustwidth}
+
+		\begin{lstlisting}[numbers=none,frame=none]
+		var pos: Posicion := b.catalogo.obtener(l); // O(log(L))
+		b.catalogo.borrar(l); // O(log(L))
+		b.posicionesLibres.encolar(pos); // O(log(k))
+		b.socios.obtener(s).agregar(l); // O(1) + O(log(r))
+		\end{lstlisting}
+		Complejidad final: $O(2\log(L) + \log(k) + 1 + \log(r)) = O(\log(r) + \log(k) + \log(L))$
+	\end{proc}
+
+	\pagebreak
+
+	\begin{proc}{DevolverLibro}{\Inout b: \moduletype, \In l: idLibro, \In s: Socio}{}
+		\begin{adjustwidth}{+5em}{}
+			\begin{itemize}
+				\item \textbf{Requiere}: $s$ es socio de la biblioteca y el libro $l$ está entre sus libros prestados
+				\item \textbf{Descripción}: el socio pasa a devolver un libro que previamente había tomado prestado. Vuelve a la estantería en el primer espacio disponible.
+				\item \textbf{Complejidad}: $O(\log(r) + \log(k) + \log(L))$
+			\end{itemize}
+		\end{adjustwidth}
+
+		\begin{lstlisting}[numbers=none,frame=none]
+		b.socios.obtener(s).sacar(l); // O(1) + O(log(r))
+		var pos: Posicion;
+
+		if b.posicionesLibres.size() == 0 then
+			pos := b.catalogo.size(); // O(1)
+		else
+			pos := b.posicionesLibres.desencolar(); // O(log(k))
+		endif // O(log(k))
+
+		b.catalogo.definir(l, pos); // O(log(L))
+		\end{lstlisting}
+		Complejidad final: $O(1 + \log(r) + \log(k) + \log(L)) = O(\log(r) + \log(k) + \log(L))$
+	\end{proc}
+
+	\begin{proc}{Prestados}{\Inout b: \moduletype, \In s: Socio}{Conjunto\lrangle{Libro}}
+		\begin{adjustwidth}{+5em}{}
+			\begin{itemize}
+				\item \textbf{Requiere}: $s$ es socio de la biblioteca
+				\item \textbf{Descripción}: este procedimiento retorna los libros que el socio tomó prestados de la biblioteca y aún no devolvió
+				\item \textbf{Complejidad}: $O(1)$
+			\end{itemize}
+		\end{adjustwidth}
+
+		\begin{lstlisting}[numbers=none,frame=none]
+		return b.socios.obtener(s); // O(1)
+		\end{lstlisting}
+	\end{proc}
+
+	\begin{proc}{UbicacionDeLibro}{\Inout b: \moduletype, \In l: idLibro}{Posicion}
+		\begin{adjustwidth}{+5em}{}
+			\begin{itemize}
+				\item \textbf{Requiere}: $l$ pertenece a la colección de libros de $b$ y no está prestado
+				\item \textbf{Descripción}: obtiene la posición del libro en la estantería
+				\item \textbf{Complejidad}: $O(\log(L))$
+			\end{itemize}
+		\end{adjustwidth}
+
+		\begin{lstlisting}[numbers=none,frame=none]
+		return b.coleccion.obtener(l); // O(log(L))
+		\end{lstlisting}
+	\end{proc}
+
+\end{module}
+
 \end{document}
