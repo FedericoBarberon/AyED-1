@@ -443,7 +443,7 @@ Se desea diseñar un sistema de estadísticas para la cantidad de personas que i
 
 	\begin{proc}{nuevoIngresos}{}{\moduletype}
 		\begin{lstlisting}[numbers=none,frame=none]
-		res.totales := new Vector < int > ();
+		res.totalesAcumulados := new Vector < int > ();
 		return res;
 		\end{lstlisting}
 	\end{proc}
@@ -468,10 +468,10 @@ Se desea diseñar un sistema de estadísticas para la cantidad de personas que i
 		\compl{O(1)}
 		\begin{lstlisting}[numbers=none,frame=none]
 		if desde == 0 then
-			return i[hasta];
+			return i.totalesAcumulados[hasta];
 		endif
 
-		return i[hasta] - i[desde - 1];
+		return i.totalesAcumulados[hasta] - i.totalesAcumulados[desde - 1];
 		\end{lstlisting}
 	\end{proc}
 
