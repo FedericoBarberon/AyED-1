@@ -18,26 +18,27 @@
 \subsection{Ejercicio 1}
 Comparar la complejidad de de los algoritmos de ordenamiento dados en la teórica para el caso en que el arreglo a ordenar se encuentre perfectamente ordenado de manera inversa a la deseada.
 
-\begin{center}
-    \begin{tabular}{|c|c|l}
-        \hline
-        \textbf{Algoritmo} & \textbf{Complejidad} \\
-        \hline
-        Selection          & $O(n^2)$             \\
-        \hline
-        Insertion          & $O(n^2)$             \\
-        \hline
-        Merge              & $O(n^2)$             \\
-        \hline
-        Quick              & $O(n^2)$             \\
-        \hline
-    \end{tabular}
-\end{center}
+\hacer
+% \begin{center}
+%     \begin{tabular}{|c|c|l}
+%         \hline
+%         \textbf{Algoritmo} & \textbf{Complejidad} \\
+%         \hline
+%         Selection          & $O(n^2)$             \\
+%         \hline
+%         Insertion          & $O(n^2)$             \\
+%         \hline
+%         Merge              & $O(n^2)$             \\
+%         \hline
+%         Quick              & $O(n^2)$             \\
+%         \hline
+%     \end{tabular}
+% \end{center}
 
 \subsection{Ejercicio 2}
 Defina la propiedad de estabilidad en un algoritmo de ordenamiento. Explique por qué el algoritmo de \textit{heapSort} no es estable
 
-La estabilidad hace referencia a la propiedad de los algoritmos de ordenamiento de mantener el orden relativo de los elementos del arreglo original. En el caso del algoritmo \textit{heapSort}, esta propiedad no se cumple ya que al momento de corregir los elementos que estan mal posicionados en el heap, se puede potencialmente perder el orden relativo original de los elementos.
+La estabilidad hace referencia a la propiedad de los algoritmos de ordenamiento de mantener el orden relativo de los elementos de igual comparación del arreglo original. En el caso del algoritmo \textit{heapSort}, esta propiedad no se cumple ya que al momento de corregir los elementos que estan mal posicionados en el heap, se puede potencialmente perder el orden relativo original de los elementos.
 
 \subsection{Ejercicio 3}
 Imagine secuencias de naturales de la forma $s = Concatenar(s', s'')$, donde $s'$ es una secuencia ordenada de naturales y $s''$ es una secuencia de naturales elegidos al azar. ¿Qué método utilizaría para ordenar $s$? Justificar. (Entiéndase que $s'$ se encuentra ordenada de la manera deseada)
