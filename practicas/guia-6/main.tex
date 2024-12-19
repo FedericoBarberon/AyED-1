@@ -144,7 +144,17 @@ $>$
 	\begin{lstlisting}[numbers=none,frame=none]
 	var actual: NodoLista < T >
 	var i: int;
-	
+
+	if indice == 0 then
+		if l.longitud == 1 then
+			l.primero := null
+			l.ultimo := null
+		else
+			l.primero := l.primero.siguiente
+		endif
+		return
+	endif
+
 	actual := l.primero;
 	i := indice;
 
@@ -152,6 +162,10 @@ $>$
 		actual := actual.siguiente;
 		i := i - 1;
 	endwhile
+
+	if indice == l.longitud - 1 then
+		l.ultimo := actual
+	endif
 
 	actual.siguiente := actual.siguiente.siguiente;
 	\end{lstlisting}
@@ -311,7 +325,7 @@ Implemente el TAD ConjuntoAcotado$<$T$>$ (definido en el apunte de TADs) usando 
 Implemente el TAD Conjunto$<$T$>$ (definido en el apunte de TADs) usando la siguiente estructura.
 
 \begin{module}{ConjuntoLista}{T}{Conjunto}{T}
-	\var{datos}{\mathsf{ListaEnlazada<T>}}
+	\var{datos}{ListaEnlazada<T>}
 	\var{tamaño}{\Int}
 \end{module}
 
@@ -324,7 +338,7 @@ Implemente el TAD Conjunto$<$T$>$ (definido en el apunte de TADs) usando la sigu
 \end{itemize}
 
 \begin{module}{ConjuntoLista}{T}{Conjunto}{T}
-	\var{datos}{\mathsf{ListaEnlazada<T>}}
+	\var{datos}{ListaEnlazada<T>}
 	\var{tamaño}{\Int}
 
 	\pred{sinRepetidos}{s: \TLista{T}}{
