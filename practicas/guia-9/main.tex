@@ -206,4 +206,96 @@ Complejidad final: $O(n\log(n))$
     endfor
     \end{lstlisting}
 \end{proc}
+
+\subsection{Ejercicio 8}
+Suponga que su objetivo es ordenar arreglos de naturales (sobre los que no se conoce nada en especial), y que cuenta con una implementación de árboles AVL. ¿Se le ocurre alguna forma de aprovecharla? Conciba un algoritmo que llamaremos \textit{AVL Sort}. ¿Cuál es el mejor orden de complejidad que puede lograr?
+
+\textit{Ayuda}: debería hallar un algortimo que requiere tiempo $O(n\log(d))$ en peor caso, donde $n$ es la cantidad de elementos a ordenar y $d$ es la cantidad de elementos distintos. Para inspirarse, piense en \textit{Heap Sort} (no en los detalles puntuales, sino en la idea general de este último).
+
+Justifique por qué su algoritmo cumple con lo pedido.
+
+\begin{itemize}
+    \item Creamos un AVL vacío en el cual voy a guardar cada elemento distinto del arreglo junto con sus repeticiones en una tupla. // $O(1)$
+
+    \item Recorro el arreglo y me fijo si el elemento pertenece al AVL // $O(n\log(d))$
+
+          \begin{enumerate}
+              \item Si el elemento no pertenece al AVL entonces lo insertamos // $O(\log(d))$
+              \item Si el elemento pertenece entonces aumento el valor de repeticiones de ese elemento // $O(\log(d))$
+          \end{enumerate}
+
+    \item Construyo un array ordenado del avl usando el metodo inorder // $O(d)$
+    \item Itero ese array y pongo en el array original cada elemento tantas veces como se repita // $O(n)$
+\end{itemize}
+
+Complejidad final: $O(n\log(d))$
+
+\begin{proc}{AVLSort}{\Inout A: \Array{\Int}}{}
+    \begin{lstlisting}[numbers=none,frame=none]
+    var avl: AVL< Tupla <int, int> > := new AVL();
+
+    for e in A do // O(n log(d)) en total
+        if avl.pertenece(e) then // O(log(d))
+            avl.obtener(e)[1]++; // O(log(d))
+        else
+            var elem: Tupla< int, int > := new Tupla(e, 1);
+            avl.agregar(elem); // O(log(d))
+        endif
+    endfor
+
+    var arrElemsConRep: Array < Tupla <int, int> > := avl.inorder(); // O(d)
+
+    var i: int := 0;
+
+    for e in arrElemsConRep do // O(n) en total
+        for j := 0 to e[1] do
+            A[i] := e[0];
+            i++;
+        endfor
+    endfor
+    \end{lstlisting}
+\end{proc}
+
+\subsection{Ejercicio 9}
+Se tienen dos arreglos de números naturales, $A[1..n]$ y $B[1..m]$. Nada en especial se sabe de $B$, pero $A$ tiene $n'$ secuencias de números repetidos continuos (por ejemplo $A = [333311118888877771145555], n' = 7$). Se sabe además que $n'$ es mucho más chico que $n$. Se desea obtener un arreglo $C$ de tamaño $n+m$ que contenga los elementos de $A$ y $B$, ordenados.
+
+\begin{enumerate}
+    \item Escriba un algoritmo para obtener $C$ que tenga complejdiad temporal $O(n + (n' + m)\log(n' + m))$ en el peor caso. Justifique la complejidad de su algoritmo.
+    \item Suponiendo que todos los elementos de $B$ se encuentran en $A$, escriba un algortimo para obtener $C$ que tenga complejidad temporal $O(n + n'(\log(n') + m))$ en el peor caso y que utilice solamente arreglos como estructuras auxiliares. Justifique la complejidad de su algoritmo
+\end{enumerate}
+
+\hacer
+
+\pagebreak
+
+\subsection{Ejercicio 10}
+**Enunciado**
+
+alumno es \struct{nombre: \str, turno: Turno, puntaje: \nat}
+
+donde Turno es \texto{enum\lrangle{Mañana, Noche}} y \textit{puntaje} es un \nat no mayor que 10
+\begin{proc}{ordenaPlanilla}{\Inout p: \Array{alumno}}{}
+    \begin{lstlisting}[numbers=none,frame=none]
+    CountingSort(p); // por puntaje de menor a mayor, al estar acotado entre 1 y 10 es O(n)
+
+    var B: Array< ListaEnlazada< alumno > > := new Array(Turno.size()); // Buckets
+    
+    for t in Turno do // O(1) pues la cantidad de turnos es acotada
+        B[t] := new ListaEnlazada();
+    endfor
+
+    for alumno in p do // O(n)
+        B[alumno.turno].agregarAtras(alumno); // O(1)
+    endfor
+
+    var i: int := 0;
+
+    for alumnosPorTurno in B do // O(n) en total
+        for alumno in alumnosPorTurno do
+            p[i] := alumno;
+            i++;
+        endfor
+    endfor
+    \end{lstlisting}
+\end{proc}
 \end{document}
